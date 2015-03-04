@@ -3,23 +3,36 @@
 
 #include <nana/gui/wvl.hpp>
 #include <nana/gui/widgets/menubar.hpp>
-#include <nana/gui/place.hpp>
-//#include <../../nana.ext/include/vplace.hpp>
 #include <nana/gui/widgets/textbox.hpp>
 
-//#include <../../nana.ext/include/CompoWidget.hpp>
-//#include <nana/gui/wvl.hpp>
 #include <nana/gui/widgets/panel.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/combox.hpp>
 #include <nana/gui/widgets/label.hpp>
-//#include <nana/gui/place.hpp>
 #include <nana/gui/filebox.hpp>       
 
 
 #include <iostream> 
 #include <fstream> 
 #include <cassert>
+
+#define USE_vPLACE 1
+
+#if defined(USE_vPLACE)
+
+#include <../../nana.ext/include/vplace.hpp>
+namespace nana 
+{
+   using place=vplace;
+}
+
+#else
+
+#include <nana/gui/place.hpp>
+
+#endif
+
+
 
  std::ostream& operator<<(std::ostream& o,const nana::rectangle &r);
 //{ o<<" rect("<<r.x<<","<<r.y<<","<<r.width <<","<<r.height <<")\n"; return o;}
@@ -70,7 +83,7 @@ class EditableWidget: public EnablingEditing
 		{
 			nana::arg_mouse ei;
             ei.evt_code = nana::event_code::click;
-			ei.pos.x= 0, ei.pos.y = 0;
+			ei.pos.x=  ei.pos.y = 1;
 			ei.left_button = true;
 			ei.ctrl = ei.shift = false;
 			nana::API::emit_event(nana::event_code::click,w, ei);
@@ -82,7 +95,7 @@ class EditableWidget: public EnablingEditing
     std::string     _myLayout, _DefLayout;
     nana::string    _DefLayoutFileName;	
 	nana::menu	    _menuProgram;
-    nana::place	_place;   //     nana::vplace	_place;
+    nana::place	_place;  //      nana::vplace	_place;
 	EditLayout_Form*    _myEdLayForm{nullptr};    	//std::unique_ptr <EditLayout_Form> _myEdLayForm;
 
     std::vector<std::function<bool(void)>> _validate, _validated;
