@@ -700,7 +700,11 @@ namespace nana{
         {
             bool operator()( const rectangle&a, const rectangle& b )
             {
-                if ( a.overlap ( b ) ) return false;
+                //if ( a.overlap ( b ) ) return false;
+                // x >= r.right() || r.x >= right() || y >= r.bottom() || r.y >= bottom()
+                if ( !(a.x >= b.right() || b.x >= a.right() || a.y >= b.bottom() || b.y >= a.bottom() )) return false;
+
+
                 if ( a.y < b.y )    return true;
                 if ( a.y > b.y )    return false;
                 if ( a.x < b.x )    return true;
