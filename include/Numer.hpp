@@ -163,7 +163,7 @@ class UnitPicker : public combox
         editable(false);
         for(const CUnit::unit_name& un : CUnit::MagnitudesDic().at(magnitude) )
             push_back (charset ( un  ));     /*CUnit::UnitsDic().at(un).to_string ()*/ 
-        caption(charset (def));
+        caption(nana::string(charset(def)));
         //ext_event().selected=[&](combox& cb)
         //{
         //    _cb.caption(_cb.caption().substr(6, _cb.caption().find_first_of(STR(" ="),6)-6 )); 
