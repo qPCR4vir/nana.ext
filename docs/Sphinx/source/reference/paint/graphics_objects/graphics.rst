@@ -1,4 +1,0 @@
-.. todo:: Complete graphics
-
-graphics
-========
