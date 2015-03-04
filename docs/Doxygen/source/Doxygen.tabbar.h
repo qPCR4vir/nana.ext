@@ -21,7 +21,7 @@ Only *scrolling button* is enabled by default. Enable the other buttons by emplo
         };
 
     + `add_tab()` is invoked when a new item is being created. 
-    + `select()` methond is invoked when selects an item. 
+    + `active()` method is invoked when selects an item. 
     + `remove()` method is invoked when closes an item and to stop closing the item by returning false.
 
 */
