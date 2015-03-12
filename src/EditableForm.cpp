@@ -136,7 +136,7 @@ EditableWidget::~EditableWidget()
             {
                 // std::cerr<<"\nContaining EditLayout_Form: ";    // debbug
                 //std::wcerr<< _myEdLayForm->caption() ;   // debbug
-               _myEdLayForm->Closable();
+               //_myEdLayForm->make_closable();
                 delete _myEdLayForm/*->close()*/;
             }
         }
@@ -215,8 +215,8 @@ void EditLayout_Form::MakeResponsive()
 void EditLayout_Form::on_edited()
 {
    nana::string newTitel  = _Titel  +  STR(" <") ;
-                newTitel +=  nana::string(nana::charset(_textBox.filename())) ;
-                newTitel += (_textBox.saved()? STR(">"): STR(" * >")  );
+                newTitel +=  _textBox.filename() ;
+                newTitel += (_textBox.edited() ? STR(" * >"): STR(">")  );
     caption	( newTitel);
 }
 void EditLayout_Form::SetDefLayout   ()
@@ -296,8 +296,8 @@ void EditLayout_Form::OpenFileN(const nana::string   &file)
             return;
         //std::wcout<<std::endl<<STR("OpenFileN: ")<<file<<std::endl;   // debbug
         if ( _textBox.edited () )
-            SaveFileN(nana::string(nana::charset(_textBox.filename())),STR("Do you want to save your edited Layout?")); 
-		_textBox.load(file.c_str() );
+            SaveFileN(_textBox.filename(), STR("Do you want to save your edited Layout?")); 
+		_textBox.load( file );
         _textBox.select(true);
         _textBox.show();
         //std::wcout<<std::endl<<STR("OpenedFileN: ")<<file<<std::endl;   // debbug

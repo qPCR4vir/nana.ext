@@ -16,7 +16,7 @@
 #include <fstream> 
 #include <cassert>
 
-#define USE_vPLACE 1
+//#define USE_vPLACE 1
 
 #if defined(USE_vPLACE)
 
@@ -455,31 +455,34 @@ public:
 
 class EditLayout_Form : public nana::form, public EditableForm
 {
-    EditableWidget     &_owner;   /// intercambiar nombre con owner de EditableWidget
-	OpenSaveBox			_OSbx       {*this, STR("Layout:" )};
-	nana::button	_ReCollocate{*this, STR("Apply"	  )},    _hide{*this, STR("Hide"	 )}, 
-                        _panic      {*this, STR("Panic !" )},     _def{*this, STR("Default"  )}, 
-                        _cpp        {*this, STR("C++ code")};
-    nana::textbox	_textBox{ *this };
-    nana::menu	   &_menuFile{_menuBar.push_back(STR("&File"))};
-    nana::event_handle _hide_not_unload{Hidable()};  // hide_(),
+    EditableWidget &_owner;   /// intercambiar nombre con owner de EditableWidget
+	OpenSaveBox     _OSbx       {*this, STR("Layout:" )};
+	nana::button	_ReCollocate{*this, STR("Apply"	  )},   _hide{*this, STR("Hide"	    )}, 
+                    _panic      {*this, STR("Panic !" )},   _def {*this, STR("Default"  )}, 
+                    _cpp        {*this, STR("C++ code")};
+    nana::textbox	_textBox    { *this };
+    nana::menu	      &_menuFile        {_menuBar.push_back(STR("&File"))};
+    nana::event_handle _hide_not_unload { make_hidable()};  // hide_(),
 
 public:
 	EditLayout_Form (EditableWidget &EdWd_owner , int i=0);
-    void Closable()
+    void make_closable()
     { 
          //assert((     std::cerr<<"\nMaking Closeable EditLayout_Form: "   , true) );;   // debbug
          //assert((     std::wcerr<< this->caption()  , true ) ); ;  // debbug
  
-        umake_event ( _hide_not_unload);
-        _hide_not_unload = nullptr;
+        if (_hide_not_unload) 
+        {
+            umake_event ( _hide_not_unload);
+            _hide_not_unload = nullptr;
+        }
     }
     ~EditLayout_Form()
     {
           //assert((    std::cerr<<"\nDestroying EditLayout_Form: " , true   ));;   // debbug
           //assert((    std::wcerr<< this->caption()  , true  )); ;  // debbug
         //umake_event ( hide_);
-        Closable();
+        make_closable();
     }
 
  private:
@@ -488,7 +491,7 @@ public:
     void on_edited();
 	void InitCaptions();
 
-    nana::event_handle Hidable()
+    nana::event_handle make_hidable()
     { 
         //assert((    std::cerr<<"\nMaking Hidable EditLayout_Form: " , true ) );; // debbug
         //assert((    std::wcerr<< this->caption() , true ) ); ; // debbug
