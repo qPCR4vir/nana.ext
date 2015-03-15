@@ -160,8 +160,10 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 
         AsignWidgetToFields();
         //_place.div(_myLayout.c_str ());     
-
-        ReCollocate( lay_from_file );
+        //_place.div(lay_from_file.c_str ());     
+	    //_place.collocate ();
+        //ReCollocate( lay_from_file );  // ???????????????????????????????????????????????????????????????????
+        InitDiv( lay_from_file );  // ???????????????????????????????????????????????????????????????????
 	}
             void InitMenu   (nana::menu& menuProgram)
     {
@@ -238,6 +240,43 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 	    _place.collocate ();
 
     }
+    void InitDiv( std::string  Layout)
+    {
+        _myLayout.swap(Layout);
+        try 
+        {
+            InitDiv( );
+        }
+        catch(std::exception& e)
+        {
+             (nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget InitDiv: "))
+                    .icon(nana::msgbox::icon_error)
+                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
+                                 <<STR("\n   Title: "    )  << _Titel
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
+                                 <<STR("\n   ocurred exception: ") << e.what() 
+             ).show();
+        }
+		catch(...)
+		{
+             (nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget InitDiv: "))
+                    .icon(nana::msgbox::icon_error)
+                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
+                                 <<STR("\n   Title: "    )  << _Titel
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
+             ).show();
+	    }
+        _myLayout.swap(Layout); /// call InitDiv again???
+	}
+    void InitDiv( )
+    {
+        _place.div(_myLayout.c_str() );     
+        //_place.div(_myLayout );     
+	    //_place.collocate ();
+
+    }
 };
 
 
@@ -261,7 +300,7 @@ class EditableForm: public EditableWidget
         EditableWidget::InitMyLayout();
         //_place.div(_myLayout.c_str ());     
 
-        ////ReCollocate( );
+        ReCollocate( );
 	}
 
 };

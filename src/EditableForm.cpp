@@ -170,6 +170,7 @@ EditLayout_Form::EditLayout_Form  (	EditableWidget &EdWd_owner, int i)
         }
 
 		MakeResponsive();
+        //ReCollocate();
 	}
 
 void EditLayout_Form::InitCaptions()
