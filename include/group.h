@@ -36,14 +36,22 @@ namespace nana
             fmt = ft.str();
 
             plc["titel"] << titel;
+
+            color obg = owner.bgcolor();
+            titel.bgcolor(obg.blend(colors::black, 0.975) );
+            color bg=obg.blend(colors::black, 0.950 );
+            bgcolor(bg);
+
             drawing dw(*this);
-            dw.draw([gap,sz](paint::graphics& graph)
-            {
-                graph.rectangle(rectangle(gap-1, sz.height/2, 
-                                          graph.width()-2*(gap-1), graph.height()-sz.height/2-(gap-1)),
-                                 false, colors::gray_border);
-            });
-            plc.div(fmt.c_str());
+		    dw.draw([gap,sz,bg,obg](paint::graphics& graph)
+		    {
+			    graph.rectangle(true, obg);
+                graph.round_rectangle(rectangle(       point ( gap-1,   sz.height/2), 
+                                                 nana::size  (graph.width()-2*(gap-1),   graph.height()-sz.height/2-(gap-1))),
+                                      3,3, colors::gray_border,     true, bg);
+           });
+
+           plc.div(fmt.c_str());
         }
     };
 }
