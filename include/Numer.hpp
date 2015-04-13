@@ -35,7 +35,7 @@ void display()
 class NumberBox : public textbox
 {
   public:
-    NumberBox (   widget &parent,    
+    NumberBox (   window parent,    
                     double val=0, 
                     unsigned decimals=2,
                     unsigned width=6)
@@ -204,7 +204,7 @@ class NumUnitUpDown : public CompoWidget
 public:
     NumerUpDown _num; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
     UnitPicker  _unit; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
-    NumUnitUpDown ( widget &wd,        
+    NumUnitUpDown ( window wd,        
                     const string& label, 
                     double defVal,    double min,     double max,    
                     const CUnit::unit_name& def  , 

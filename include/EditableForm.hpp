@@ -75,8 +75,8 @@ class EditLayout_Form;
 class EditableWidget: public EnablingEditing
 {
  public:
-    EditableWidget ( nana::widget* EdWd_owner,                       ///< The ownwer of the form (if any) or panel 
-                     nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
+    EditableWidget ( nana::window  EdWd_owner,    ///< The ownwer of the form (if any) or panel 
+                     nana::widget& thisEdWd,      ///< the form or panel, owner of place and all other widgets of the editable widget
                      nana::string Titel, 
                      const nana::string &DefLayoutFileName=STR("")           );
     static  void Click(nana::window w)
@@ -89,7 +89,7 @@ class EditableWidget: public EnablingEditing
 			nana::API::emit_event(nana::event_code::click,w, ei);
 		}
 
-    nana::widget   *_EdWd_owner ;                                    ///< The ownwer of the form or panel 
+    nana::window    _EdWd_owner ;                                    ///< The ownwer of the form or panel 
     nana::widget   &_thisEdWd;   ///< the form or panel, owner of place and all other widgets of the editable widget
 	nana::string	_Titel;   //  ????
     std::string     _myLayout, _DefLayout;
@@ -212,22 +212,22 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
+             (nana::msgbox(_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
                     .icon(nana::msgbox::icon_error)
                                  <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
                                  <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
                                  <<STR("\n   trying to layout: \n "  ) << _myLayout
                                  <<STR("\n   ocurred exception: ") << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
+             (nana::msgbox(_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
                     .icon(nana::msgbox::icon_error)
                                  <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
                                  <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
                                  <<STR("\n   trying to layout: \n "  ) << _myLayout
              ).show();
 	    }
@@ -249,22 +249,22 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget InitDiv: "))
+             (nana::msgbox(_EdWd_owner, STR("std::exception during EditableWidget InitDiv: "))
                     .icon(nana::msgbox::icon_error)
                                  <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
                                  <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
                                  <<STR("\n   trying to layout: \n "  ) << _myLayout
                                  <<STR("\n   ocurred exception: ") << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget InitDiv: "))
+             (nana::msgbox(_EdWd_owner, STR("An uncaptured exception during EditableWidget InitDiv: "))
                     .icon(nana::msgbox::icon_error)
                                  <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
                                  <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(*_EdWd_owner)
+                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
                                  <<STR("\n   trying to layout: \n "  ) << _myLayout
              ).show();
 	    }
@@ -282,7 +282,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 
 class EditableForm: public EditableWidget
 { public:
-    EditableForm ( nana::widget* EdWd_owner,                       ///< The ownwer of the form or panel 
+    EditableForm ( nana::window EdWd_owner,                       ///< The ownwer of the form or panel 
                    nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
                    nana::string Titel, 
                    const nana::string &DefLayoutFileName=STR("")           );
@@ -309,7 +309,7 @@ class EditableForm: public EditableWidget
 
 class CompoWidget : public  nana::panel<false> , public EditableWidget  
 {public:
-	CompoWidget ( nana::widget& owner,              ///< The ownwer of the panel 
+	CompoWidget ( nana::window parent,              ///< The ownwer of the panel 
                   nana::string Titel, 
                   const nana::string &DefLayoutFileName=STR(""));
 };
@@ -330,7 +330,7 @@ class FilePickBox : public  CompoWidget
                         _canceled{false};
 
  public:
-	FilePickBox     (	nana::widget    &EdWd_owner, 
+	FilePickBox     (	nana::window parent, 
 						const nana::string   &label,
 						const nana::string   &DefLayoutFileName=STR("") );
 
@@ -417,7 +417,7 @@ class OpenSaveBox : public  FilePickBox
     void AsignWidgetToFields() override ;
 
 public:
-	OpenSaveBox     (	nana::widget    &EdWd_owner, 
+	OpenSaveBox     (	nana::window parent, 
 						const nana::string   &label,
 						const nana::string   &DefLayoutFileName=STR("") );
 

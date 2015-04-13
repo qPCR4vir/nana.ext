@@ -10,7 +10,7 @@
 //{ o<<" rect("<<r.x<<","<<r.y<<","<<r.width <<","<<r.height <<")\n"; return o;}
 //
 
-    EditableWidget::EditableWidget  ( nana::widget* EdWd_owner,   ///< The ownwer of the form or panel: nullptr for "primary" forms 
+    EditableWidget::EditableWidget  ( nana::window EdWd_owner,   ///< The ownwer of the form or panel: nullptr for "primary" forms 
                                       nana::widget& thisEdWd,  ///< the form or panel, owner of place and all other widgets of the editable widget
                                       nana::string Titel, 
                                       const nana::string &DefLayoutFileName)
@@ -57,11 +57,11 @@
         InitMenu   (_menuProgram);
     }
 
-	CompoWidget::CompoWidget (nana::widget& owner,            ///< The ownwer of the CompoWidget, that is: the owner of the CompoWidget´s form or panel 
+	CompoWidget::CompoWidget (nana::window parent,            ///< The ownwer of the CompoWidget, that is: the owner of the CompoWidget´s form or panel 
                               nana::string Titel, 
                               const nana::string &DefLayoutFileName)
-        :  nana::panel<false>(owner),  
-           EditableWidget( &owner,                                  ///< The ownwer of the form or panel 
+        :  nana::panel<false>(parent),  
+           EditableWidget( parent,                                  ///< The ownwer of the form or panel 
                            *this,               ///< the form or panel, owner of place and all other widgets of the editable widget
                            Titel, DefLayoutFileName)
     {
@@ -85,7 +85,7 @@
 
     }
 
-EditableForm::EditableForm ( nana::widget *EdWd_owner,                       ///< The ownwer of the form or panel 
+EditableForm::EditableForm ( nana::window EdWd_owner,                       ///< The ownwer of the form or panel 
                              nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
                              nana::string Titel, 
                              const nana::string &DefLayoutFileName         ) 
@@ -145,7 +145,7 @@ EditableWidget::~EditableWidget()
 
 EditLayout_Form::EditLayout_Form  (	EditableWidget &EdWd_owner, int i)
 		:nana::form (EdWd_owner._thisEdWd , nana::rectangle( nana::point(300,100), nana::size(500,300) )),
-         EditableForm (&(EdWd_owner._thisEdWd), *this,  STR("Editing Layout of: "),STR("Layout_Form.lay.txt")),
+         EditableForm ((EdWd_owner._thisEdWd), *this,  STR("Editing Layout of: "),STR("Layout_Form.lay.txt")),
          _owner(EdWd_owner)
 	{	
         caption(_Titel += _owner._Titel) ;  
@@ -212,6 +212,13 @@ void EditLayout_Form::MakeResponsive()
         _hide       .events().click([&](){ hide()      ;}   ); 
         _cpp        .events().click([&](){ toCppCode() ;}   ); 
         _ReCollocate.events().click([&](){ ReLayout()  ;}   ); 
+
+        _textBox.set_highlight("place_keywords", nana::colors::blue, nana::colors::white);
+        _textBox.set_keywords ("place_keywords", true,true, { "arrange", "collapse", "gap", "grid", 
+                                "margin", "min", "max", "repeated", "variable", "vertical", "vert", "weight", "horizontal" });
+        _textBox.set_highlight("place_simbols", nana::colors::blue, nana::colors::yellow);
+        _textBox.set_keywords ("place_simbols", true,false, {"<",">", "|", "%", "[","]" });
+
 	}
 void EditLayout_Form::on_edited()
 {

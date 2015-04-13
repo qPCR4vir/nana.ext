@@ -3,10 +3,10 @@
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
 
-FilePickBox::FilePickBox (nana::widget &fm, 
+FilePickBox::FilePickBox (nana::window parent, 
 						  const nana::string   &label,
 						  const nana::string   &DefLayoutFileName )
-				:	CompoWidget(fm, label, DefLayoutFileName) 
+				:	CompoWidget(parent, label, DefLayoutFileName) 
 {
     _label.caption(caption());
     _label.text_align(nana::align::right  ); 
@@ -90,10 +90,10 @@ void FilePickBox::select_file(nana::filebox&  fb, const nana::string &action, co
  }
 
 
-OpenSaveBox::OpenSaveBox (nana::widget &fm, 
+OpenSaveBox::OpenSaveBox (nana::window parent, 
 						  const nana::string   &label,
 						  const nana::string   &DefLayoutFileName )
-				:	FilePickBox(fm, label, DefLayoutFileName) 
+				:	FilePickBox(parent, label, DefLayoutFileName) 
 {
     fb_o.title(STR("Open ") + caption());
     fb_s.title(STR("Save ") + caption());
