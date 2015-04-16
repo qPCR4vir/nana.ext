@@ -258,45 +258,45 @@ class Bind_CParamStr_FilePickBox : public Bind_FilePickBox, public Bind_CParamSt
 };
 
 
-upPbind link(CParamString &p,            nana::widget&      w)
+inline upPbind link(CParamString &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamStr_widget (p, w));
 }
-upPbind link(CParamString &p,            FilePickBox&            w)
+inline upPbind link(CParamString &p,            FilePickBox&            w)
 {
     return  upPbind(new Bind_CParamStr_FilePickBox  (p, w ));
 }
 
-upPbind link(CParamC_str &p,            nana::widget&      w)
+inline upPbind link(CParamC_str &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamC_str_widget (p, w));
 }
-//upPbind link(CParamC_str &p,            FilePickBox&            w)
+ //inline upPbind link(CParamC_str &p,            FilePickBox&            w)
 //{
 //    return  link(p, w._file_w());
 //}
 
 
-upPbind link(CParamBool &p,             nana::checkbox&    c)
+inline upPbind link(CParamBool &p,             nana::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
 
              template <class Num> 
-upPbind link(CParamNumRange<Num>  &p, nana::NumUnitUpDown& c)
+inline upPbind link(CParamNumRange<Num>  &p, nana::NumUnitUpDown& c)
 {
     return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
 }
              
              template <class Num> 
-upPbind link(CParamNumMinMax<Num> &p, nana::NumUnitUpDown& min, 
+inline upPbind link(CParamNumMinMax<Num> &p, nana::NumUnitUpDown& min, 
                                       nana::NumUnitUpDown& max)
 {
     return  upPbind(new  Bind_MinMaxUnitUpDw<Num> (p,min,max) );
 }
              
              template <typename enumType>
-upPbind link(CParamEnumRange<enumType>& p, nana::combox& c, bool initialize=true)
+inline upPbind link(CParamEnumRange<enumType>& p, nana::combox& c, bool initialize=true)
 {
     return  upPbind(new  Bind_EnumRange_combox<enumType>(p,c,initialize));
 }
@@ -321,7 +321,7 @@ public:
 
 };
             template <class Bind_Param,class Bind_Widget,class Param,class Widget> 
-upPbind link( Param &p,  Widget&  w)
+inline upPbind link( Param &p,  Widget&  w)
 {
     return  upPbind(new Bind_Param_Widget<Bind_Param,Bind_Widget> (p, w));
 }
