@@ -81,11 +81,8 @@ class EditableWidget: public EnablingEditing
                      const nana::string &DefLayoutFileName=STR("")           );
     static  void Click(nana::window w)
 		{
-			nana::arg_mouse ei;
-            ei.evt_code = nana::event_code::click;
-			ei.pos.x=  ei.pos.y = 1;
-			ei.left_button = true;
-			ei.ctrl = ei.shift = false;
+			nana::arg_click ei;
+			ei.by_mouse = true; //    ????    .evt_code = nana::event_code::mouse_down;			// ei.pos.x=  ei.pos.y = 1;			// ei.left_button = true;			// ei.ctrl = ei.shift = false;
 			nana::API::emit_event(nana::event_code::click,w, ei);
 		}
 
@@ -174,7 +171,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
     }
             void SelectClickableWidget(nana::widget& wdg, nana::menu& menuProgram)
             {
-                wdg.events().click (nana::menu_popuper(menuProgram) );   
+                wdg.events().mouse_down (nana::menu_popuper(menuProgram) );   
             }
             void SelectClickableWidget(nana::widget& wdg)
             {
