@@ -1,3 +1,14 @@
+/**
+* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+*
+*	Distributed under the Boost Software License, Version 1.0.
+*	(See accompanying file LICENSE_1_0.txt or copy at
+*	http://www.boost.org/LICENSE_1_0.txt)
+*
+*	@file nana.ext\src\EditableForm.cpp
+*  @autor Ariel Vina-Rodriguez (qPCR4vir)
+*  @brief
+*/
 #include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/CompoWidget.hpp>
 

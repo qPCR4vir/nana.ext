@@ -1,14 +1,16 @@
-/*
+/**
  *	An Alternative Implementation of Place for Layout
- *  (
- *	Copyright(C) 2003-2014 Jinhao(cnjinhao@hotmail.com)
+ *  
+ *	Copyright(C) 2003-2015 Jinhao(cnjinhao@hotmail.com)
  *
  *	Distributed under the Boost Software License, Version 1.0.
  *	(See accompanying file LICENSE_1_0.txt or copy at
  *	http://www.boost.org/LICENSE_1_0.txt)
  *
- *	@file: nana/gui/place.cpp
- */
+ *	@file  nana.ext\src\vplace.cpp
+ *  @autor Ariel Vina-Rodriguez (qPCR4vir)
+ *  @brief
+*/
 #include <sstream>
 #include <cfloat>
 #include <cmath>
