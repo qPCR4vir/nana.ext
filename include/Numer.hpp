@@ -37,8 +37,8 @@ class NumberLabel : public label
     double Value(double val)     {_val=val; display(); return _val;}
 void display()
 {
-    string val(50,0);
-    swprintf(&val[0],val.size(), STR(" %*.*f"), _width, _decimals, _val );
+    std::string val(50,0);
+    snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
     caption (val.c_str());
 }
 };
@@ -77,8 +77,8 @@ void validate_edit()
 }
 void display()
 {
-    string val(50,0);
-    swprintf(&val[0],val.size(), STR(" %*.*f"), _width, _decimals, _val );
+    std::string val(50,0);
+    snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
     caption (val.c_str());
 }
 
@@ -86,16 +86,16 @@ void display()
 
 class NumerUpDown : public  CompoWidget
 {
-    button      _up{*this, STR("^")},   _down{*this, STR("v")};  
+    button      _up{*this, ("^")},   _down{*this, ("v")};  
     label       _label;
     double      _val, _min, _max, _step;
     unsigned    _decimals, _width;
  public:
     textbox     _num{*this};
 
-   NumerUpDown (   widget &parent_,      const string &label, 
+   NumerUpDown (   widget &parent_,      const std::string &label,
                     double val,           double min, double max, 
-                    const string         &DefFileName=STR("NumUpDown.VertCenter.lay.txt"), 
+                    const std::string         &DefFileName=("NumUpDown.VertCenter.lay.txt"),
                     double step=1,       unsigned width=6,    unsigned decimals=2  );
 
     double   Value    (         )const{              return _val;  }
@@ -143,8 +143,8 @@ class NumerUpDown : public  CompoWidget
     void add     (double step)  {      Value (step+Value()); }
     void display ()
     {
-        string val(50,0);
-        swprintf(&val[0],val.size(), STR(" %*.*f"), _width, _decimals, _val );
+        std::string val(50,0);
+        snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
         _num.caption (val.c_str());
     }
 
@@ -174,17 +174,17 @@ class UnitPicker : public combox
     {
         editable(false);
         for(const CUnit::unit_name& un : CUnit::MagnitudesDic().at(magnitude) )
-            push_back (charset ( un  ));     /*CUnit::UnitsDic().at(un).to_string ()*/ 
-        caption(nana::string(charset(def)));
+            push_back (  un  );     /*CUnit::UnitsDic().at(un).to_string ()*/ 
+        caption( def  );
         //ext_event().selected=[&](combox& cb)
         //{
-        //    _cb.caption(_cb.caption().substr(6, _cb.caption().find_first_of(STR(" ="),6)-6 )); 
+        //    _cb.caption(_cb.caption().substr(6, _cb.caption().find_first_of((" ="),6)-6 )); 
         //};
     }
 
     double to_def   (double val) ///< Convert a value in user selected Unit into Default Unit 
     {
-        return CUnit::CUnit(nana::charset (caption()) ,  _defUnitName  ).conv (val);
+        return CUnit::CUnit( caption()  ,  _defUnitName  ).conv (val);
     }
     double to_def   (double val, const CUnit::unit_name& un ) ///< Convert a value in Unit un into Default Unit 
     {
@@ -192,19 +192,19 @@ class UnitPicker : public combox
     }
     double from_def (double val) ///< Convert a value in Default Unit into user selected Unit 
     {
-        return CUnit::CUnit( _defUnitName, nana::charset (caption())  ).conv (val);
+        return CUnit::CUnit( _defUnitName,  caption()   ).conv (val);
     }
     double from_def (double val, const CUnit::unit_name& un ) ///< Convert a value in Default Unit into Unit un 
     {
-        return CUnit::CUnit( _defUnitName, nana::charset (caption())  ).conv (val);
+        return CUnit::CUnit( _defUnitName,  caption()   ).conv (val);
     }
     double convert_to(double val, const CUnit::unit_name& un) ///< Convert a value in user selected Unit into Unit un 
     {
-        return CUnit::CUnit( nana::charset (caption()), un ).conv (val);
+        return CUnit::CUnit(  caption() , un ).conv (val);
     }
     double convert_from(double val, const CUnit::unit_name& un) ///< Convert a value in Unit un into the user selected Unit
     {
-        return CUnit::CUnit(un ,  nana::charset (caption()) ).conv (val);
+        return CUnit::CUnit(un ,   caption()  ).conv (val);
     }
 
 };
@@ -217,20 +217,20 @@ public:
     NumerUpDown _num; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
     UnitPicker  _unit; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
     NumUnitUpDown ( window wd,        
-                    const string& label, 
+                    const std::string& label,
                     double defVal,    double min,     double max,    
                     const CUnit::unit_name& def  , 
-                    const string& DefLayFile =STR("NumUnitUpDonw.Lay.txt"),   
+                    const std::string& DefLayFile =("NumUnitUpDonw.Lay.txt"),
                     double step=1,   unsigned width=6, unsigned decimals=2)
-        : CompoWidget (wd,label,STR("NumUnitUpDonw.Lay.txt")),
-          _num(*this,label, defVal, min,max,STR("Vert-Invert.NumUpDonw.Lay.txt"),step,width,decimals),
+        : CompoWidget (wd,label,("NumUnitUpDonw.Lay.txt")),
+          _num(*this,label, defVal, min,max,("Vert-Invert.NumUpDonw.Lay.txt"),step,width,decimals),
           _unit(*this, def), _curr_un(def) //_val(defVal)
     {
         _unit.events().selected([&](const nana::arg_combox& arg_cb)
                                     {
-                                        CUnit u(_curr_un , charset( _unit.caption() ));   /*CUnit::unit_name ( nana::charset(cb.option ()) ) */
+                                        CUnit u(_curr_un , /*charset*/( _unit.caption() ));   /*CUnit::unit_name ( nana::charset(cb.option ()) ) */
                                         if(u.error )
-                                        {    _unit.caption (_unit.caption ()+STR("?"));
+                                        {    _unit.caption (_unit.caption ()+("?"));
                                              return;
                                         }
                                         _num.Max   ( u.conv(_num.Max  () )  );
@@ -239,7 +239,7 @@ public:
                                         if (u.conv.linear )
                                           _num.Step( u.conv.c*_num.Step()   );
                                        
-                                        _curr_un=charset(_unit.caption ());
+                                        _curr_un=/*charset*/(_unit.caption ());
                                     });
         InitMyLayout();
         SelectClickableWidget( _num);
@@ -320,6 +320,6 @@ public:
 
 }  // namespace nana  
 
-        //cb.caption(_cb.caption().substr(6, _cb.caption().find_first_of(STR(" ="),6)-6 )); 
+        //cb.caption(_cb.caption().substr(6, _cb.caption().find_first_of((" ="),6)-6 )); 
 
 #endif 
