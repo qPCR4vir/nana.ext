@@ -93,7 +93,7 @@ public:
     }
     nanaWidgetBind (CompoWidget & CW, nana::widget& resp_w): _w(CW)
     {
-        //std::wcerr<< _w.caption() <<STR(" Setting add_validate")<< std::endl;
+        //std::wcerr<< _w.caption() <<(" Setting add_validate")<< std::endl;
         
         CW.add_validate ([&]()->bool
         {  
@@ -126,10 +126,10 @@ public:
         //        }); 
     }
 
-    void          updateForm(nana::string val){
+    void          updateForm(std::string val){
                                                     _w.caption(val); nana::API::update_window (_w);
                                               }
-    nana::string  getFormVal(       ){ return   _w.caption (   );
+    std::string  getFormVal(       ){ return   _w.caption (   );
                                      }
 };
 
@@ -171,12 +171,12 @@ class Bind_FilePickBox : public nanaWidgetBind
  public:				
     Bind_FilePickBox ( FilePickBox & c):nanaWidgetBind(c/*,c._file_w()*/ ){} 
 
-    void         updateForm(nana::string file)
+    void         updateForm(std::string file)
     {  
         static_cast <FilePickBox&>(_w).FileNameOnly (file);
         nana::API::update_window (_w); 
     }
-    nana::string getFormVal(  ){  return  static_cast <FilePickBox&>(_w).FileName  (   ); }
+    std::string getFormVal(  ){  return  static_cast <FilePickBox&>(_w).FileName  (   ); }
 };
 
 class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString  
@@ -361,8 +361,8 @@ inline upPbind link( Param &p,  Widget&  w)
 // public:				
 //    Bind_txtbox ( nana::textbox& c):nanaWidgetBind(c){} 
 //
-//    //void          updateForm(nana::string val){ static_cast <nana::textbox&>(_w).caption (val); }
-//    //nana::string  getFormVal(       ){ return   static_cast <nana::textbox&>(_w).caption (   ); }
+//    //void          updateForm(std::string val){ static_cast <nana::textbox&>(_w).caption (val); }
+//    //std::string  getFormVal(       ){ return   static_cast <nana::textbox&>(_w).caption (   ); }
 //};
      //BindGroup&	operator<<	(upPbind&& pb){  _pb.push_back(std::move(pb)) ;	  return *this;	 }
 //upPbind link(CParamC_str &p, nana::textbox& c)
