@@ -902,7 +902,7 @@ namespace nana{
                 recollocate = true;
             }
             
-            void add_label ( const nana::string& txt )
+            void add_label ( const std::string& txt )
             {
                 nana::label*lab = std::addressof ( nana::form_loader <nana::label> ()(parent_window_handle, txt) );
                 labels.push_back ( lab );

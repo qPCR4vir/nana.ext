@@ -13,9 +13,9 @@
 
 namespace nana { 
 
-NumerUpDown::NumerUpDown (  widget &parent_,      const string &label, 
+NumerUpDown::NumerUpDown (  widget &parent_,      const std::string &label,
                             double val,           double min, double max, 
-                            const nana::string   &DefFileName/*=STR("NumUpDown.VertCenter.lay.txt")*/, 
+                            const std::string   &DefFileName/*=("NumUpDown.VertCenter.lay.txt")*/, 
                             double step/*=1*/,    unsigned width/*=6*/,    unsigned decimals/*=2*/  ) 
         :	CompoWidget( parent_, label, DefFileName),
 			 _label(*this,label),
@@ -45,8 +45,7 @@ NumerUpDown::NumerUpDown (  widget &parent_,      const string &label,
 
          _num.events().focus([&](const arg_focus& ei)
                 {  
-                    std::cerr << std::endl<< (ei.getting ? "geting ":"lossing ") << "Focus: , NumerUpDown: ";
-                    std::wcerr<< _label.caption() << std::endl;
+                    std::cerr << std::endl<< (ei.getting ? "geting ":"lossing ") << "Focus: , NumerUpDown: " << _label.caption() << std::endl;
                     if ( !ei.getting )
                     {
                         std::cerr   << "And validating: " << _val << "Cap:" << std::string(charset(_num.caption ()));
