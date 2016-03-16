@@ -89,20 +89,24 @@ class EditableWidget: public EnablingEditing
  public:
     EditableWidget ( nana::window  EdWd_owner,    ///< The ownwer of the form (if any) or panel 
                      nana::widget& thisEdWd,      ///< the form or panel, owner of place and all other widgets of the editable widget
-                     nana::string Titel, 
-                     const nana::string &DefLayoutFileName=STR("")           );
+                     std::string Titel, 
+                     const std::string &DefLayoutFileName=""           );
+
     static  void Click(nana::window w)
 		{
 			nana::arg_click ei;
-			ei.by_mouse = true; //    ????    .evt_code = nana::event_code::mouse_down;			// ei.pos.x=  ei.pos.y = 1;			// ei.left_button = true;			// ei.ctrl = ei.shift = false;
+			ei.window_handle = w;
+			ei.mouse_args = nullptr;
+			/// \todo revise 
+			//ei.by_mouse = true; //    ????    .evt_code = nana::event_code::mouse_down;			// ei.pos.x=  ei.pos.y = 1;			// ei.left_button = true;			// ei.ctrl = ei.shift = false;
 			nana::API::emit_event(nana::event_code::click,w, ei);
 		}
 
-    nana::window    _EdWd_owner ;                                    ///< The ownwer of the form or panel 
-    nana::widget   &_thisEdWd;   ///< the form or panel, owner of place and all other widgets of the editable widget
-	nana::string	_Titel;   //  ????
+    nana::window    _EdWd_owner ;              ///< The ownwer of the form or panel 
+    nana::widget   &_thisEdWd;                 ///< the form or panel, owner of place and all other widgets of the editable widget
+	std::string	_Titel;   //  ????
     std::string     _myLayout, _DefLayout;
-    nana::string    _DefLayoutFileName;	
+    std::string    _DefLayoutFileName;	
 	nana::menu	    _menuProgram;
     nana::place	_place;  //      nana::vplace	_place;
 	EditLayout_Form*    _myEdLayForm{nullptr};    	//std::unique_ptr <EditLayout_Form> _myEdLayForm;
@@ -119,8 +123,7 @@ class EditableWidget: public EnablingEditing
         }
         catch ( ... )
         { 
-            std::cerr << "\nError in Validate of ";
-            std::wcerr << _Titel;
+            std::cerr << "\nError in Validate of "<< _Titel;
             return false; 
         }
     }
@@ -134,8 +137,7 @@ class EditableWidget: public EnablingEditing
         }
         catch ( ... )
         { 
-            std::cerr << "\nError in Validated of ";
-            std::wcerr << _Titel;
+            std::cerr << "\nError in Validated of " << _Titel;
             return false; 
         }
     }
@@ -176,9 +178,9 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 	}
             void InitMenu   (nana::menu& menuProgram)
     {
-       menuProgram.append(STR("&Edit this windows Layout"),[&](nana::menu::item_proxy& ip)
+       menuProgram.append("&Edit this windows Layout",[&](nana::menu::item_proxy& ip)
 	                                                            {EditMyLayout(); }                  );
-       menuProgram.append(STR("&Reset this windows default Layout"),[&](nana::menu::item_proxy& ip)
+       menuProgram.append("&Reset this windows default Layout",[&](nana::menu::item_proxy& ip)
 	                                                            {ResetDefLayout(); ReCollocate( );} );
     }
             void SelectClickableWidget(nana::widget& wdg, nana::menu& menuProgram)
@@ -211,7 +213,9 @@ virtual    void add_validated(const std::function<bool(void)>& v)
     }
 
  	void         EditMyLayout   (/*nana::widget & EdWd_own, nana::widget &EdLyF_own*/);
-    static const char* readLayout(const nana::string& FileName, std::string& Layout);
+
+    static const char* readLayout(const std::string& FileName, std::string& Layout);
+
     void ReCollocate( std::string  Layout)
     {
         _myLayout.swap(Layout);
@@ -221,23 +225,23 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
+             (nana::msgbox(_EdWd_owner, "std::exception during EditableWidget ReCollocation: ")
                     .icon(nana::msgbox::icon_error)
-                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
-                                 <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
-                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
-                                 <<STR("\n   ocurred exception: ") << e.what() 
+                                 <<"\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 <<"\n   Title: "      << _Titel
+                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 <<"\n   trying to layout: \n "   << _myLayout
+                                 <<"\n   ocurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
+             (nana::msgbox(_EdWd_owner, "An uncaptured exception during EditableWidget ReCollocation: ")
                     .icon(nana::msgbox::icon_error)
-                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
-                                 <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
-                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
+                                 <<"\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 <<"\n   Title: "      << _Titel
+                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 <<"\n   trying to layout: \n "   << _myLayout
              ).show();
 	    }
         _myLayout.swap(Layout); /// call ReCollocate again???
@@ -258,23 +262,23 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(_EdWd_owner, STR("std::exception during EditableWidget InitDiv: "))
+             (nana::msgbox(_EdWd_owner, "std::exception during EditableWidget InitDiv: ")
                     .icon(nana::msgbox::icon_error)
-                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
-                                 <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
-                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
-                                 <<STR("\n   ocurred exception: ") << e.what() 
+                                 << "\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 << "\n   Title: "      << _Titel
+                                 << "\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 << "\n   trying to layout: \n "   << _myLayout
+                                 << "\n   ocurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(_EdWd_owner, STR("An uncaptured exception during EditableWidget InitDiv: "))
+             (nana::msgbox(_EdWd_owner,  "An uncaptured exception during EditableWidget InitDiv: ") 
                     .icon(nana::msgbox::icon_error)
-                                 <<STR("\n   in widget: ")  << nana::API::window_caption( _thisEdWd)
-                                 <<STR("\n   Title: "    )  << _Titel
-                                 <<STR("\n   owned by: "  ) << nana::API::window_caption(_EdWd_owner)
-                                 <<STR("\n   trying to layout: \n "  ) << _myLayout
+                                 << "\n   in widget: "   << nana::API::window_caption( _thisEdWd)
+                                 << "\n   Title: "       << _Titel
+                                 << "\n   owned by: "    << nana::API::window_caption(_EdWd_owner)
+                                 << "\n   trying to layout: \n "    << _myLayout
              ).show();
 	    }
         _myLayout.swap(Layout); /// call InitDiv again???
@@ -293,17 +297,21 @@ class EditableForm: public EditableWidget
 { public:
     EditableForm ( nana::window EdWd_owner,                       ///< The ownwer of the form or panel 
                    nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
-                   nana::string Titel, 
-                   const nana::string &DefLayoutFileName=STR("")           );
+                   std::string Titel, 
+                   const std::string &DefLayoutFileName=""           
+		);
+
 	nana::menubar	_menuBar;
 	nana::menu*	_menuProgramInBar;
     //virtual ~EditableForm();
+
     void AddMenuProgram ()
     {
         assert (!_menuProgramInBar );
-        _menuProgramInBar=&_menuBar.push_back(STR("&Programm"));
+        _menuProgramInBar=&_menuBar.push_back("&Programm");
         InitMenu   (*_menuProgramInBar);
     }
+
     void InitMyLayout       ()
 	{   
         EditableWidget::InitMyLayout();
@@ -319,29 +327,35 @@ class EditableForm: public EditableWidget
 class CompoWidget : public  nana::panel<false> , public EditableWidget  
 {public:
 	CompoWidget ( nana::window parent,              ///< The ownwer of the panel 
-                  nana::string Titel, 
-                  const nana::string &DefLayoutFileName=STR(""));
+                  std::string Titel, 
+                  const std::string &DefLayoutFileName=""
+		);
 };
 
+/// \todo use fs::path
 class FilePickBox : public  CompoWidget
 {	nana::label	    _label   {*this};
 	nana::combox	_fileName{*this};    //   Only temporal public   !!!!!!!!!!!!!!!!!!!!!!!!!!!
-	nana::button	 Pick    {*this, STR("...")};
+	nana::button	 Pick    {*this, "..."};
 
 	nana::filebox   fb_p    {*this, true};
 
     void SetDefLayout       () override ;
     void AsignWidgetToFields() override ;
-	void		pick(const nana::string &file_tip=STR(""));
+	void		pick(const std::string &file_tip="");
+
  protected:
-	void select_file(nana::filebox&  fb, const nana::string &action, const nana::string &file_tip, bool select_only=false);
-    bool                _user_selected{ false }, _validate_only{false},
-                        _canceled{false};
+	void select_file(nana::filebox&  fb, const std::string &action, const std::string &file_tip, bool select_only=false);
+
+    bool                _user_selected { false }, 
+		                _validate_only { false },
+                        _canceled      { false };
 
  public:
 	FilePickBox     (	nana::window parent, 
-						const nana::string   &label,
-						const nana::string   &DefLayoutFileName=STR("") );
+						const std::string   &label,
+						const std::string   &DefLayoutFileName=""
+		);
 
     void SetDefLayout       (unsigned lab) ;
     void ResetLayout        (unsigned lab )
@@ -351,13 +365,13 @@ class FilePickBox : public  CompoWidget
         ReCollocate( );    
     }
 
-    virtual FilePickBox& add_filter(const nana::string& description, const nana::string& filetype)
+    virtual FilePickBox& add_filter(const std::string& description, const std::string& filetype)
 	{ 
 		fb_p.add_filter(description, filetype);
         return *this;
 	}
             
-    using filtres = std::vector<std::pair<nana::string, nana::string>>;
+    using filtres = std::vector<std::pair<std::string, std::string>>;
 
 	virtual FilePickBox& add_filter(const filtres &filtres)
         {
@@ -366,7 +380,7 @@ class FilePickBox : public  CompoWidget
             //    add_filter(f.first, f.second);
             return *this;
         };
-    void        onSelectFile( std::function<void(const nana::string& file)> slt)
+    void        onSelectFile( std::function<void(const std::string& file)> slt)
 	{	 
         add_validate([this, slt](/*nana::combox&cb*/)
                     { 
@@ -379,26 +393,30 @@ class FilePickBox : public  CompoWidget
   //      _fileName.ext_event().selected = [&]()
 		//{
 		//    if(! _OSbx.UserSelected()) return;
-  //          nana::string   fileN= FileName();  // The newly selected name
-  //          //std::wcout<<std::endl<<STR("Selected: ")<<fileN<<std::endl;   // debbug
+  //          std::string   fileN= FileName();  // The newly selected name
+  //          //std::wcout<<std::endl<<("Selected: ")<<fileN<<std::endl;   // debbug
 		//	OpenFileN(fileN );
 		//};
  	}
 
-	nana::string FileName()const						{  return _fileName.caption();}
-	void		 FileName(const nana::string&  FileName)
+	std::string FileName()const						
+	{  return _fileName.caption();}
+
+	void		 FileName(const std::string&  FileName)
     { 
         _fileName.push_back(FileName).option(_fileName.the_number_of_options());
         nana::API::update_window (_fileName);
     }
-	void		 FileNameOnly(const nana::string&  FileN )  /// validate only
+
+	void		 FileNameOnly(const std::string&  FileN )  /// validate only
     { 
         bool  vo{ true };
         std::swap(vo,_validate_only);
         FileName ( FileN  ) ;
         std::swap(vo,_validate_only);
     }
-    void         FileNameOpen(const nana::string&  item)  /// validate and validated
+
+    void         FileNameOpen(const std::string&  item)  /// validate and validated
     {
         bool us{ false }, vo{ false };
         //std::swap(us,_user_selected); 
@@ -407,30 +425,35 @@ class FilePickBox : public  CompoWidget
         //std::swap(us,_user_selected); 
         std::swap(vo,_validate_only);
     }
+
     bool        UserSelected() const {return _user_selected ;}
+
     bool        Canceled()     const {return _canceled;}
+
     //nana::widget& _file_w()
     //{
     //    return _fileName;
     //}
 };
 
+/// \todo use fs::path
 class OpenSaveBox : public  FilePickBox
 {
-    nana::button	Open{*this, STR("Open") }, 
-                        Save{*this, STR("Save")};
+    nana::button	Open{*this, "Open" }, 
+                    Save{*this, "Save"};
+
 	nana::filebox  fb_o{*this, true },                      //   Only temporal public   !!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        fb_s{*this, false };
+                   fb_s{*this, false };
 
     void SetDefLayout       () override ;
     void AsignWidgetToFields() override ;
 
 public:
 	OpenSaveBox     (	nana::window parent, 
-						const nana::string   &label,
-						const nana::string   &DefLayoutFileName=STR("") );
+						const std::string   &label,
+						const std::string   &DefLayoutFileName="" );
 
-	OpenSaveBox& add_filter(const nana::string& description, const nana::string& filetype) override
+	OpenSaveBox& add_filter(const std::string& description, const std::string& filetype) override
 	{ 
 		FilePickBox::add_filter(description, filetype);
 		fb_o.add_filter(description, filetype);
@@ -451,7 +474,7 @@ public:
     void OpenClick() 	{Click(Open);}
 	void SaveClick() 	{Click(Save);}
 
-    OpenSaveBox& onOpenAndSelectFile(std::function<void(const nana::string& file)> opn)
+    OpenSaveBox& onOpenAndSelectFile(std::function<void(const std::string& file)> opn)
     {
         add_validated([this, opn](/*nana::combox&cb*/)
                     { 
@@ -463,10 +486,10 @@ public:
         return *this;
     }
 	
-    void		open(const nana::string &file_tip=STR("")); 
-    void		save(const nana::string &file_tip = STR(""),  const nana::string &action=STR(""));
+    void		open(const std::string &file_tip =""); 
+    void		save(const std::string &file_tip = "",  const std::string &action="");
     
-    nana::event_handle onOpenFile(std::function<void(const nana::string& file)> opn)
+    nana::event_handle onOpenFile(std::function<void(const std::string& file)> opn)
     {
         return Open.events().click([this, opn]()
                     { 
@@ -482,7 +505,7 @@ public:
                          opn (  ) ; 
                     } );
  	}
-    nana::event_handle onSaveFile(std::function<void(const nana::string& file)> sve)
+    nana::event_handle onSaveFile(std::function<void(const std::string& file)> sve)
 	{	 
         return Save.events().click ([this,sve]()
                     { 
@@ -504,16 +527,17 @@ public:
 class EditLayout_Form : public nana::form, public EditableForm
 {
     EditableWidget &_owner;   /// intercambiar nombre con owner de EditableWidget
-	OpenSaveBox     _OSbx       {*this, STR("Layout:" )};
-	nana::button	_ReCollocate{*this, STR("Apply"	  )},   _hide{*this, STR("Hide"	    )}, 
-                    _panic      {*this, STR("Panic !" )},   _def {*this, STR("Default"  )}, 
-                    _cpp        {*this, STR("C++ code")};
+	OpenSaveBox     _OSbx       {*this, "Layout:" };
+	nana::button	_ReCollocate{*this, "Apply"	  },   _hide{*this, "Hide"	    }, 
+                    _panic      {*this, "Panic !" },   _def {*this, "Default"  }, 
+                    _cpp        {*this, "C++ code"};
     nana::textbox	_textBox    { *this };
-    nana::menu	      &_menuFile        {_menuBar.push_back(STR("&File"))};
+    nana::menu	      &_menuFile        {_menuBar.push_back("&File")};
     nana::event_handle _hide_not_unload { make_hidable()};  // hide_(),
 
 public:
 	EditLayout_Form (EditableWidget &EdWd_owner , int i=0);
+
     void make_closable()
     { 
          //assert((     std::cerr<<"\nMaking Closeable EditLayout_Form: "   , true) );;   // debbug
@@ -525,6 +549,7 @@ public:
             _hide_not_unload = nullptr;
         }
     }
+
     ~EditLayout_Form()
     {
           //assert((    std::cerr<<"\nDestroying EditLayout_Form: " , true   ));;   // debbug
@@ -557,9 +582,9 @@ public:
 	void ReLayout ();
     void ReloadDef();
 	void OpenFile ();
-	void OpenFileN(const nana::string   &file=STR(""));
-	void SaveFileN(const nana::string   &fileTip=STR("") , const nana::string   &tmp_title = nana::string{} );
-    void ForceSave(const nana::string   &file);
+	void OpenFileN(const std::string   &file="");
+	void SaveFileN(const std::string   &fileTip="" , const std::string   &tmp_title = std::string{} );
+    void ForceSave(const std::string   &file);
     void SaveFile(){     // temporal !!!!!!!!!!!!!!
         if (!_OSbx.Canceled())
             ForceSave(_OSbx.FileName());
