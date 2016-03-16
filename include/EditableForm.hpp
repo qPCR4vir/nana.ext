@@ -49,7 +49,7 @@ namespace nana
  std::ostream& operator<<(std::ostream& o,const nana::rectangle &r);
 //{ o<<" rect("<<r.x<<","<<r.y<<","<<r.width <<","<<r.height <<")\n"; return o;}
 
-
+/// \todo implement use
 class EnablingEditing
 {
  private:
@@ -84,6 +84,8 @@ class EnablingEditing
 
 class EditLayout_Form;
 
+
+/// add functionality of editable layout at runtime \todo redesign to be member no base class
 class EditableWidget: public EnablingEditing
 {
  public:
@@ -160,7 +162,8 @@ virtual    void add_validated(const std::function<bool(void)>& v)
     virtual     ~EditableWidget     ();
     virtual void SetDefLayout       ()=0;
     virtual void AsignWidgetToFields()=0;
-	        void InitMyLayout       ()
+
+	void InitMyLayout       ()
 	{   
         SetDefLayout   ();
         _myLayout= _DefLayout;
@@ -176,31 +179,35 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         //ReCollocate( lay_from_file );  // ???????????????????????????????????????????????????????????????????
         InitDiv( lay_from_file );  // ???????????????????????????????????????????????????????????????????
 	}
-            void InitMenu   (nana::menu& menuProgram)
+
+    void InitMenu   (nana::menu& menuProgram)
     {
        menuProgram.append("&Edit this windows Layout",[&](nana::menu::item_proxy& ip)
 	                                                            {EditMyLayout(); }                  );
        menuProgram.append("&Reset this windows default Layout",[&](nana::menu::item_proxy& ip)
 	                                                            {ResetDefLayout(); ReCollocate( );} );
     }
-            void SelectClickableWidget(nana::widget& wdg, nana::menu& menuProgram)
-            {
-                wdg.events().mouse_down (nana::menu_popuper(menuProgram) );   
-            }
-            void SelectClickableWidget(nana::widget& wdg)
-            {
-                SelectClickableWidget(wdg, _menuProgram);
-            }
+
+    void SelectClickableWidget(nana::widget& wdg, nana::menu& menuProgram)
+    {
+        wdg.events().mouse_down (nana::menu_popuper(menuProgram) );   
+    }
+
+    void SelectClickableWidget(nana::widget& wdg)
+    {
+        SelectClickableWidget(wdg, _menuProgram);
+    }
 
 
-            void ResetDefLayout()
+    void ResetDefLayout()
     {
         _myLayout=_DefLayout;
         //ReCollocate( );
                 //_place.div(_myLayout.c_str ());     //    ?????????????????
 
     }
-            void ResetDefLayout( std::string  Layout)
+ 
+	void ResetDefLayout( std::string  Layout)
     {
         _DefLayout.swap(Layout);
         ResetDefLayout();

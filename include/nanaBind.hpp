@@ -9,9 +9,11 @@
 #include "init_prog_param.h" 
 #include "ParamGUIBind.hpp" 
 #include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>
+#include <../../nana.ext/include/Numer.hpp>  // #include <../../nana.ext/include/Numer.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
 
+
+/// \todo implement a general template that use delegated and inherited constructors?
 namespace ParamGUIBind 
 {
 class nanaWidgetBind : public virtual IParBind 
@@ -144,6 +146,8 @@ class Bind_checkbox : public nanaWidgetBind
     bool getFormVal()/*const*/ {  return  static_cast <nana::checkbox&>(_w).checked(   ); 
                                }
 };
+
+/// \todo: adapt to new nana::spinbox
 class Bind_NumUpDw : public nanaWidgetBind  
 { 	
  public:				
@@ -152,6 +156,8 @@ class Bind_NumUpDw : public nanaWidgetBind
     void   updateForm(double val){  static_cast <nana::NumerUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
     double getFormVal(  ){  return  static_cast <nana::NumerUpDown&>(_w).Value  (   ); }
 };
+
+/// \todo: adapt to new nana::spinbox
 class Bind_UnitUpDw : public nanaWidgetBind  
 { 	
  public:				
@@ -166,6 +172,7 @@ class Bind_UnitUpDw : public nanaWidgetBind
     double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (un     );
                                                               }
 };
+
 class Bind_FilePickBox : public nanaWidgetBind  
 { 	
  public:				
@@ -187,6 +194,8 @@ class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )))        ;}
 };
+
+/// \deprecate
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
  public:				
@@ -195,6 +204,7 @@ class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
 };
+
 class BindBool   : public Bind_checkbox, public Bind_CParamBool  
 { 	
  public:				
@@ -203,7 +213,10 @@ class BindBool   : public Bind_checkbox, public Bind_CParamBool
     void	UpDateForm(	 )	override {         updateForm(getProgVal()); }
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
 };
-   template <class Num> 
+
+
+/// \todo: adapt to new nana::spinbox
+template <class Num>
 class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>  
 { 	
  public:				
@@ -221,7 +234,9 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
 	void	UpDateProg(	 )	override {     updateProg(Num (getFormVal(   _p.Unit()))); 
                                      }
 };
-   template <class Num> 
+
+/// \todo: adapt to new nana::spinbox
+template <class Num>
 class Bind_MinMaxUnitUpDw : public BindGroup 
 {public:
     Bind_MinMaxUnitUpDw(CParamNumMinMax<Num>&p, nana::NumUnitUpDown& min, 
@@ -232,6 +247,7 @@ class Bind_MinMaxUnitUpDw : public BindGroup
     }
 };
 
+/// \todo eliminate charset use?
 template <typename enumType>
 class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRange<enumType>
 { 	
@@ -248,7 +264,9 @@ class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRan
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
 };
-class Bind_CParamStr_FilePickBox : public Bind_FilePickBox, public Bind_CParamString  
+
+/// \todo eliminate charset use?
+class Bind_CParamStr_FilePickBox : public Bind_FilePickBox, public Bind_CParamString
 { 	
  public:				
     Bind_CParamStr_FilePickBox (CParamString &p, FilePickBox& c):Bind_CParamString(p),Bind_FilePickBox(c){SetDef();} 
@@ -262,11 +280,13 @@ inline upPbind link(CParamString &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamStr_widget (p, w));
 }
+
 inline upPbind link(CParamString &p,            FilePickBox&            w)
 {
     return  upPbind(new Bind_CParamStr_FilePickBox  (p, w ));
 }
 
+/// \deprecate?
 inline upPbind link(CParamC_str &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamC_str_widget (p, w));
@@ -282,7 +302,10 @@ inline upPbind link(CParamBool &p,             nana::checkbox&    c)
     return  upPbind(new BindBool (p, c));
 }
 
-             template <class Num> 
+
+
+/// \todo: adapt to new nana::spinbox
+template <class Num>
 inline upPbind link(CParamNumRange<Num>  &p, nana::NumUnitUpDown& c)
 {
     return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
