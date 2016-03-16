@@ -16,14 +16,14 @@
 #include <fstream>     // temp, for debugging
 
 FilePickBox::FilePickBox (nana::window parent, 
-						  const nana::string   &label,
-						  const nana::string   &DefLayoutFileName )
+						  const std::string   &label,
+						  const std::string   &DefLayoutFileName )
 				:	CompoWidget(parent, label, DefLayoutFileName) 
 {
     _label.caption(caption());
     _label.text_align(nana::align::right  ); 
 
-    fb_p.title(STR("Pick ") + caption());
+    fb_p.title(("Pick ") + caption());
 
 	Pick.events().click([&](){pick(FileName());}	); 
 
@@ -77,16 +77,16 @@ FilePickBox::FilePickBox (nana::window parent,
 	_place.field("label"       ) << _label;
 	_place.field("pick"        ) << Pick;
 }
-void FilePickBox::pick(const nana::string &file_tip)
+void FilePickBox::pick(const std::string &file_tip)
 {
     bool  vo{ true };
     std::swap(vo,_validate_only);
-    select_file( fb_p, STR(""), file_tip,true);
+    select_file( fb_p, (""), file_tip,true);
     std::swap(vo,_validate_only);
 }
-void FilePickBox::select_file(nana::filebox&  fb, const nana::string &action, const nana::string &file_tip, bool select_only)
+void FilePickBox::select_file(nana::filebox&  fb, const std::string &action, const std::string &file_tip, bool select_only)
 {
-    nana::string old_t;
+    std::string old_t;
     if (!action.empty())
         old_t=fb.title(action);
     fb.init_file(file_tip); 
@@ -103,12 +103,12 @@ void FilePickBox::select_file(nana::filebox&  fb, const nana::string &action, co
 
 
 OpenSaveBox::OpenSaveBox (nana::window parent, 
-						  const nana::string   &label,
-						  const nana::string   &DefLayoutFileName )
+						  const std::string   &label,
+						  const std::string   &DefLayoutFileName )
 				:	FilePickBox(parent, label, DefLayoutFileName) 
 {
-    fb_o.title(STR("Open ") + caption());
-    fb_s.title(STR("Save ") + caption());
+    fb_o.title(("Open ") + caption());
+    fb_s.title(("Save ") + caption());
 
     Open.events().click ([&](){open(FileName());}	);
 	Save.events().click ([&](){save(FileName());}    );
@@ -134,14 +134,14 @@ OpenSaveBox::OpenSaveBox (nana::window parent,
     //FilePickBox::AsignWidgetToFields() ;
 }
 	
-void OpenSaveBox::open(const nana::string &file_tip)
+void OpenSaveBox::open(const std::string &file_tip)
 {
     bool us{ false }, vo{ false };
     std::swap(vo,_validate_only);
-	select_file( fb_o, STR(""), file_tip,false);
+	select_file( fb_o, (""), file_tip,false);
     std::swap(vo,_validate_only);
 }
-void OpenSaveBox::save(const nana::string &file_tip,  const nana::string &action)
+void OpenSaveBox::save(const std::string &file_tip,  const std::string &action)
 {
     bool  vo{ true };
     std::swap(vo,_validate_only);
