@@ -165,15 +165,16 @@ class NumerUpDown : public  CompoWidget
 
 class UnitPicker : public combox
 {
-    CUnit::unit_name             _defUnitName;
-    CUnit                        _defUnit{_defUnitName};
-    const CUnit::magnitude_name  magnitude=CUnit::magnitude_name{_defUnit.magnitude};
+ 
+	RTunits::unit_name             _defUnitName;
+	RTunits::CUnit                 _defUnit{_defUnitName};
+    const RTunits::magnitude_name  magnitude= RTunits::magnitude_name{_defUnit.magnitude};
   public: 
-    UnitPicker(widget &wd, const CUnit::unit_name& def)
+    UnitPicker(widget &wd, const RTunits::unit_name& def)
                 :combox(wd), _defUnitName(def) 
     {
         editable(false);
-        for(const CUnit::unit_name& un : CUnit::MagnitudesDic().at(magnitude) )
+        for(const RTunits::unit_name& un : RTunits::MagnitudesDic().at(magnitude) )
             push_back (  un  );     /*CUnit::UnitsDic().at(un).to_string ()*/ 
         caption( def  );
         //ext_event().selected=[&](combox& cb)
@@ -184,27 +185,27 @@ class UnitPicker : public combox
 
     double to_def   (double val) ///< Convert a value in user selected Unit into Default Unit 
     {
-        return CUnit::CUnit( caption()  ,  _defUnitName  ).conv (val);
+        return RTunits::CUnit( caption()  ,  _defUnitName  ).conv (val);
     }
-    double to_def   (double val, const CUnit::unit_name& un ) ///< Convert a value in Unit un into Default Unit 
+    double to_def   (double val, const RTunits::unit_name& un ) ///< Convert a value in Unit un into Default Unit 
     {
-        return CUnit::CUnit(un ,  _defUnitName  ).conv (val);
+        return RTunits::CUnit(un ,  _defUnitName  ).conv (val);
     }
     double from_def (double val) ///< Convert a value in Default Unit into user selected Unit 
     {
-        return CUnit::CUnit( _defUnitName,  caption()   ).conv (val);
+        return RTunits::CUnit( _defUnitName,  caption()   ).conv (val);
     }
-    double from_def (double val, const CUnit::unit_name& un ) ///< Convert a value in Default Unit into Unit un 
+    double from_def (double val, const RTunits::unit_name& un ) ///< Convert a value in Default Unit into Unit un 
     {
-        return CUnit::CUnit( _defUnitName,  caption()   ).conv (val);
+        return RTunits::CUnit( _defUnitName,  caption()   ).conv (val);
     }
-    double convert_to(double val, const CUnit::unit_name& un) ///< Convert a value in user selected Unit into Unit un 
+    double convert_to(double val, const RTunits::unit_name& un) ///< Convert a value in user selected Unit into Unit un 
     {
-        return CUnit::CUnit(  caption() , un ).conv (val);
+        return RTunits::CUnit(  caption() , un ).conv (val);
     }
-    double convert_from(double val, const CUnit::unit_name& un) ///< Convert a value in Unit un into the user selected Unit
+    double convert_from(double val, const RTunits::unit_name& un) ///< Convert a value in Unit un into the user selected Unit
     {
-        return CUnit::CUnit(un ,   caption()  ).conv (val);
+        return RTunits::CUnit(un ,   caption()  ).conv (val);
     }
 
 };
@@ -212,14 +213,14 @@ class UnitPicker : public combox
 class NumUnitUpDown : public CompoWidget
 {
     //double      _val;
-    CUnit::unit_name _curr_un;
+	RTunits::unit_name _curr_un;
 public:
     NumerUpDown _num; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
     UnitPicker  _unit; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
     NumUnitUpDown ( window wd,        
                     const std::string& label,
                     double defVal,    double min,     double max,    
-                    const CUnit::unit_name& def  , 
+                    const RTunits::unit_name& def  ,
                     const std::string& DefLayFile =("NumUnitUpDonw.Lay.txt"),
                     double step=1,   unsigned width=6, unsigned decimals=2)
         : CompoWidget (wd,label,("NumUnitUpDonw.Lay.txt")),
@@ -228,7 +229,7 @@ public:
     {
         _unit.events().selected([&](const nana::arg_combox& arg_cb)
                                     {
-                                        CUnit u(_curr_un , /*charset*/( _unit.caption() ));   /*CUnit::unit_name ( nana::charset(cb.option ()) ) */
+										RTunits::CUnit u(_curr_un , /*charset*/( _unit.caption() ));   /*CUnit::unit_name ( nana::charset(cb.option ()) ) */
                                         if(u.error )
                                         {    _unit.caption (_unit.caption ()+("?"));
                                              return;
@@ -300,7 +301,7 @@ public:
          return _unit.to_def(_num.Value()); 
      }
      /// expresed in the especified "un" Units
-     double Value(const CUnit::unit_name& un)
+     double Value(const RTunits::unit_name& un)
      {
          return _unit.convert_to(_num.Value(),un); 
      }
@@ -310,7 +311,7 @@ public:
          _num.Value(_unit.from_def(val_in_default_Units)); 
      }
      /// expresed in the especified "un" Units
-     void   Value(double val, const CUnit::unit_name& un)
+     void   Value(double val, const RTunits::unit_name& un)
      {
          _num.Value(_unit.convert_from(val,un)); 
      }

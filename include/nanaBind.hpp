@@ -167,9 +167,9 @@ class Bind_UnitUpDw : public nanaWidgetBind
                                  }
     double getFormVal(  )/*const*/{  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (   ); 
                                   }
-    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val, un);nana::API::update_window (_w);
+    void   updateForm(double val, const RTunits::unit_name &un){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val, un);nana::API::update_window (_w);
                                                              }
-    double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (un     );
+    double getFormVal/*const*/(const RTunits::unit_name &un    ){  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (un     );
                                                               }
 };
 

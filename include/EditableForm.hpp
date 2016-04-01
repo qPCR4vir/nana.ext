@@ -256,7 +256,8 @@ virtual    void add_validated(const std::function<bool(void)>& v)
     void ReCollocate( )
     {
         _place.div(_myLayout.c_str() );     
-        //_place.div(_myLayout );     
+        //_place.div(_myLayout );
+
 	    _place.collocate ();
 
     }
@@ -319,12 +320,20 @@ class EditableForm: public EditableWidget
         InitMenu   (*_menuProgramInBar);
     }
 
-    void InitMyLayout       ()
+    void InitMyLayout       ()try
 	{   
         EditableWidget::InitMyLayout();
         //_place.div(_myLayout.c_str ());     
 
         ReCollocate( );
+	}
+	catch (std::exception & e)
+	{
+		throw std::runtime_error(std::string("An error ocurred during initialization of the windows layout of ")+this->_Titel + "\n" + e.what());
+	}
+	catch (...)
+	{
+		throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the windows of ") + this->_Titel + "\n" );
 	}
 
 };
