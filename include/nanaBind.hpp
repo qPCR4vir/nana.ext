@@ -1,12 +1,50 @@
+/**
+* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+*
+*      This program is free software : you can redistribute it and / or modify
+*      it under the terms of the GNU General Public License as published by
+*      the Free Software Foundation, either version 3 of the License, or
+*      (at your option) any later version.
+*    
+*      This program is distributed in the hope that it will be useful,
+*      but WITHOUT ANY WARRANTY; without even the implied warranty of
+*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+*      GNU General Public License for more details.
+*    
+*      You should have received a copy of the GNU General Public License
+*      along with this program.If not, see <http://www.gnu.org/licenses/>.
+*
+*  @file nana.ext\include\nanaBind.hpp
+*
+*  @author Ariel Vina-Rodriguez (qPCR4vir)
+*
+*  @brief Basic functionalities. To be used by UI and programs.
+*         Primary, with no dependencies.
+*
+* Extension to nana. From: https://github.com/qPCR4vir/nana.ext
+*
+* To be used together with:
+*
+*  - ProgParam - manage subprograms & programs parameters:
+*               definitions & I/O from projects files or UI.
+*               Available at: https://github.com/qPCR4vir/ProgParam
+*
+*  - the Nana C++ GUI library, from: https://github.com/cnjinhao/nana
+*
+*/
+
+
 #ifndef nanaBind_H
 #define nanaBind_H
 
 #include <memory>
 #include <vector>
  
-//#include "ThDySec\matrix.h" 
+// from ProgParam: https://github.com/qPCR4vir/ProgParam
 #include "common_basics.h" 
 #include "init_prog_param.h" 
+
+// local, from: https://github.com/qPCR4vir/nana.ext 
 #include "ParamGUIBind.hpp" 
 #include <../../nana.ext/include/EditableForm.hpp>
 #include <../../nana.ext/include/Numer.hpp>  // #include <../../nana.ext/include/Numer.hpp>
@@ -191,8 +229,8 @@ class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString
  public:				
     Bind_CParamStr_widget (CParamString &p, nana::widget& c):Bind_CParamString(p),nanaWidgetBind(c){SetDef();} 
 
-    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
-	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )))        ;}
+    void UpDateForm()override { updateForm(              getProgVal() )         ;}
+	void UpDateProg()override { updateProg(std::string(  getFormVal() ))        ;}
 };
 
 /// \deprecate
@@ -201,8 +239,8 @@ class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str
  public:				
     Bind_CParamC_str_widget (CParamC_str &p, nana::widget& c):Bind_CParamC_str(p),nanaWidgetBind(c){SetDef();} 
 
-    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
-	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
+    void UpDateForm()override { updateForm(              getProgVal() )         ;}
+	void UpDateProg()override { updateProg(std::string(  getFormVal() ).c_str());}
 };
 
 class BindBool   : public Bind_checkbox, public Bind_CParamBool  
@@ -257,12 +295,12 @@ class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRan
     {
         if (initialize)
             for (const auto& e: p.StrValues())//static_cast <CParamEnumRange<enumType>& >(_p)
-                c.push_back (nana::charset (e.first));
+                c.push_back (e.first);
         SetDef();
     } 
 
-    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
-	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
+    void UpDateForm()override { updateForm(              getProgVal() )         ;}
+	void UpDateProg()override { updateProg(std::string(  getFormVal() ).c_str());}
 };
 
 /// \todo eliminate charset use?
@@ -271,8 +309,8 @@ class Bind_CParamStr_FilePickBox : public Bind_FilePickBox, public Bind_CParamSt
  public:				
     Bind_CParamStr_FilePickBox (CParamString &p, FilePickBox& c):Bind_CParamString(p),Bind_FilePickBox(c){SetDef();} 
 
-    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
-	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )))        ;}
+    void UpDateForm()override { updateForm(              getProgVal() )         ;}
+	void UpDateProg()override { updateProg(std::string(  getFormVal() ))        ;}
 };
 
 

@@ -1,18 +1,29 @@
 /**
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *	Distributed under the Boost Software License, Version 1.0.
 *	(See accompanying file LICENSE_1_0.txt or copy at
 *	http://www.boost.org/LICENSE_1_0.txt)
 *
-*  @file  nana.ext\include\Numer.hpp
-*  @autor Ariel Vina-Rodriguez (qPCR4vir)
-*  @brief
+*  @file  nana.ext\include\number.hpp
+*
+*  @author Ariel Vina-Rodriguez (qPCR4vir)
+*
+*  @brief Provide GUI controls (nana widgets) to represent numbers
+*
+* Extension to nana. From: https://github.com/qPCR4vir/nana.ext
+*
+* To be used together with:
+*
+*  - the Nana C++ GUI library, from: https://github.com/cnjinhao/nana
+*
 */
 
 #ifndef NANA_GUI_Numer_HPP
 #define NANA_GUI_Numer_HPP
 #pragma warning(disable : 4996)
+
+//  From: https://github.com/qPCR4vir/nana.ext
 #include <../../nana.ext/include/EditableForm.hpp>
 #include <Units.hpp>
 //#include <sstream>
@@ -61,26 +72,32 @@ class NumberBox : public textbox
                         validate_edit( );
                 }); 
     }
+
     double    _val;
-    unsigned  _decimals, _width;
+    unsigned  _decimals, 
+		      _width;
+
     double Value(          )const{                    return _val;}
     double Value(double val)     {_val=val; display(); return _val;}
-void read()
-{
-    try    {  _val=std::stod (caption()  );     }
-    catch (...)     {;     }
-}
-void validate_edit()
-{
-    read();
-    display();
-}
-void display()
-{
-    std::string val(50,0);
-    snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
-    caption (val.c_str());
-}
+
+	void read()
+	{
+		try    {  _val=std::stod (caption()  );     }
+		catch (...)     {;     }
+	}
+
+	void validate_edit()
+	{
+		read();
+		display();
+	}
+
+	void display()
+	{
+		std::string val(50,0);
+		snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
+		caption (val.c_str());
+	}
 
 };
 
@@ -215,8 +232,8 @@ class NumUnitUpDown : public CompoWidget
     //double      _val;
 	RTunits::unit_name _curr_un;
 public:
-    NumerUpDown _num; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
-    UnitPicker  _unit; /// \todo: make private and provide a funtion to change the def lay, especialy the length of the label
+    NumerUpDown _num; /// \todo: make private and provide a function to change the def lay, especially the length of the label
+    UnitPicker  _unit; /// \todo: make private and provide a function to change the def lay, especially the length of the label
     NumUnitUpDown ( window wd,        
                     const std::string& label,
                     double defVal,    double min,     double max,    
@@ -267,14 +284,14 @@ public:
     {
         std::stringstream lay;
 
-         // redefine layot of this complete widget: NumUnitUpDown
+         // redefine layout of this complete widget: NumUnitUpDown
         lay << "  <    \n"
                "  <vertical   min="  << lab+15+n << "              Num                 >   \n"
                "  <vertical   min="  << unit     << " <><vertical  Unit  weight=21><>  >   \n"
                " > ";   
         _DefLayout = lay.str(); // move a copy
 
-         // redefine layot of the NumUpDown part (inside the previus Num)
+         // redefine layout of the NumUpDown part (inside the previous Num)
         lay.str("  <           \n"); 
         lay <<  "              \n"
                 "  <vertical weight="  <<  lab << "  <>< gap=1   label  weight=15> <>   >  \n"
@@ -295,22 +312,22 @@ public:
 	    _place.field("Num"    ) << _num ;
 	    _place.field("Unit"   ) << _unit ;
     }
-     /// expresed in default Units
+     /// expressed in default Units
      double Value()
      {
          return _unit.to_def(_num.Value()); 
      }
-     /// expresed in the especified "un" Units
+     /// expressed in the specified "un" Units
      double Value(const RTunits::unit_name& un)
      {
          return _unit.convert_to(_num.Value(),un); 
      }
-     /// expresed in default Units
+     /// expressed in default Units
      void   Value(double val_in_default_Units)
      {
          _num.Value(_unit.from_def(val_in_default_Units)); 
      }
-     /// expresed in the especified "un" Units
+     /// expressed in the specified "un" Units
      void   Value(double val, const RTunits::unit_name& un)
      {
          _num.Value(_unit.convert_from(val,un)); 
