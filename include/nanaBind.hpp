@@ -46,12 +46,15 @@
 
 // local, from: https://github.com/qPCR4vir/nana.ext 
 #include "ParamGUIBind.hpp" 
-#include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>  // #include <../../nana.ext/include/Numer.hpp>
+#include "EditableForm.hpp"
+#include "number.hpp" 
+
+// from nana:
 #include <nana/gui/widgets/checkbox.hpp>
 
-
 /// \todo implement a general template that use delegated and inherited constructors?
+
+
 namespace ParamGUIBind 
 {
 class nanaWidgetBind : public virtual IParBind 

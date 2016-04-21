@@ -19,14 +19,14 @@
 *
 */
 
-#ifndef NANA_GUI_Numer_HPP
-#define NANA_GUI_Numer_HPP
+#ifndef NANA_GUI_Number_HPP
+#define NANA_GUI_Number_HPP
 #pragma warning(disable : 4996)
 
 //  From: https://github.com/qPCR4vir/nana.ext
 #include <../../nana.ext/include/EditableForm.hpp>
 #include <Units.hpp>
-//#include <sstream>
+
 
 namespace nana {
  
@@ -42,16 +42,20 @@ class NumberLabel : public label
     {
         display();
     }
+
     double    _val;
-    unsigned  _decimals, _width;
-    double Value(          )const{                    return _val;}
-    double Value(double val)     {_val=val; display(); return _val;}
-void display()
-{
-    std::string val(50,0);
-    snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
-    caption (val.c_str());
-}
+    unsigned  _decimals, 
+		      _width;
+
+    double    Value(          )const{                     return _val;}
+    double    Value(double val)     {_val=val; display(); return _val;}
+
+	void display()
+	{
+		std::string val(50,0);
+		snprintf(&val[0],val.size(), (" %*.*f"), _width, _decimals, _val );
+		caption (val.c_str());
+	}
 };
 
 
