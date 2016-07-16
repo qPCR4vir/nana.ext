@@ -1,32 +1,40 @@
 /**
-* Copyright (C) 2013-2015, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *	Distributed under the Boost Software License, Version 1.0.
 *	(See accompanying file LICENSE_1_0.txt or copy at
 *	http://www.boost.org/LICENSE_1_0.txt)
 *
 *  @file  nana.ext\include\EditableForm.hpp
-*  @autor Ariel Vina-Rodriguez (qPCR4vir)
-*  @brief
+*
+*  @author Ariel Vina-Rodriguez (qPCR4vir)
+*
+*  @brief Provide base classes for GUI forms and controls (nana widgets)
+*
+* Extension to nana. From: https://github.com/qPCR4vir/nana.ext
+*
+* To be used together with:
+*
+*  - the Nana C++ GUI library, from: https://github.com/cnjinhao/nana
+*
 */
 
 #ifndef NANA_GUI_EditableForm_HPP
 #define NANA_GUI_EditableForm_HPP
 
+#include <iostream> 
+#include <fstream> 
+#include <cassert>
+
+// from: https://github.com/cnjinhao/nana
 #include <nana/gui/wvl.hpp>
 #include <nana/gui/widgets/menubar.hpp>
 #include <nana/gui/widgets/textbox.hpp>
-
 #include <nana/gui/widgets/panel.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/combox.hpp>
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/filebox.hpp>       
-
-
-#include <iostream> 
-#include <fstream> 
-#include <cassert>
 
 //#define USE_vPLACE 1
 
@@ -89,7 +97,7 @@ class EditLayout_Form;
 class EditableWidget: public EnablingEditing
 {
  public:
-    EditableWidget ( nana::window  EdWd_owner,    ///< The ownwer of the form (if any) or panel 
+    EditableWidget ( nana::window  EdWd_owner,    ///< The owner of the form (if any) or panel 
                      nana::widget& thisEdWd,      ///< the form or panel, owner of place and all other widgets of the editable widget
                      std::string Titel, 
                      const std::string &DefLayoutFileName=""           );
@@ -104,13 +112,13 @@ class EditableWidget: public EnablingEditing
 			nana::API::emit_event(nana::event_code::click,w, ei);
 		}
 
-    nana::window    _EdWd_owner ;              ///< The ownwer of the form or panel 
+    nana::window    _EdWd_owner ;              ///< The owner of the form or panel 
     nana::widget   &_thisEdWd;                 ///< the form or panel, owner of place and all other widgets of the editable widget
-	std::string	_Titel;   //  ????
+	std::string	    _Titel;                    //  ????
     std::string     _myLayout, _DefLayout;
-    std::string    _DefLayoutFileName;	
+    std::string     _DefLayoutFileName;	
 	nana::menu	    _menuProgram;
-    nana::place	_place;  //      nana::vplace	_place;
+    nana::place	    _place;                         //      nana::vplace	_place;
 	EditLayout_Form*    _myEdLayForm{nullptr};    	//std::unique_ptr <EditLayout_Form> _myEdLayForm;
 
     std::vector<std::function<bool(void)>> _validate, _validated;
@@ -238,7 +246,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
                                  <<"\n   Title: "      << _Titel
                                  <<"\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
                                  <<"\n   trying to layout: \n "   << _myLayout
-                                 <<"\n   ocurred exception: "     << e.what() 
+                                 <<"\n   occurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
@@ -276,7 +284,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
                                  << "\n   Title: "      << _Titel
                                  << "\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
                                  << "\n   trying to layout: \n "   << _myLayout
-                                 << "\n   ocurred exception: "     << e.what() 
+                                 << "\n   occurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
@@ -303,9 +311,9 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 
 class EditableForm: public EditableWidget
 { public:
-    EditableForm ( nana::window EdWd_owner,                       ///< The ownwer of the form or panel 
-                   nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
-                   std::string Titel, 
+    EditableForm ( nana::window EdWd_owner,       ///< The owner of the form or panel 
+                   nana::widget& thisEdWd,        ///< the form or panel, owner of place and all other widgets of the editable widget
+                   std::string Title,             ///< the title or caption displayed on top of the windows
                    const std::string &DefLayoutFileName=""           
 		);
 
@@ -316,24 +324,25 @@ class EditableForm: public EditableWidget
     void AddMenuProgram ()
     {
         assert (!_menuProgramInBar );
-        _menuProgramInBar=&_menuBar.push_back("&Programm");
+        _menuProgramInBar=&_menuBar.push_back("&Program");
         InitMenu   (*_menuProgramInBar);
     }
 
-    void InitMyLayout       ()try
-	{   
-        EditableWidget::InitMyLayout();
-        //_place.div(_myLayout.c_str ());     
+    void InitMyLayout       ()
+	{   try{
+				EditableWidget::InitMyLayout();
+				//_place.div(_myLayout.c_str ());     
 
-        ReCollocate( );
-	}
-	catch (std::exception & e)
-	{
-		throw std::runtime_error(std::string("An error ocurred during initialization of the windows layout of ")+this->_Titel + "\n" + e.what());
-	}
-	catch (...)
-	{
-		throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the windows of ") + this->_Titel + "\n" );
+				ReCollocate( );
+		}
+		catch (std::exception & e)
+		{
+			throw std::runtime_error(std::string("An error occurred during initialization of the windows layout of ")+this->_Titel + "\n" + e.what());
+		}
+		catch (...)
+		{
+			throw std::runtime_error(std::string("An unknown error occurred during initialization of the windows of ") + this->_Titel + "\n" );
+		}
 	}
 
 };
@@ -342,7 +351,7 @@ class EditableForm: public EditableWidget
 
 class CompoWidget : public  nana::panel<false> , public EditableWidget  
 {public:
-	CompoWidget ( nana::window parent,              ///< The ownwer of the panel 
+	CompoWidget ( nana::window parent,              ///< The owner of the panel 
                   std::string Titel, 
                   const std::string &DefLayoutFileName=""
 		);
@@ -402,7 +411,7 @@ class FilePickBox : public  CompoWidget
                     { 
                       //if( this->UserSelected() )   
                           slt ( nana::charset ( this->FileName() )) ; 
-                      return true;   // or cath exception to said false
+                      return true;   // or catch exception to said false
                     } ); 
         //_fileName.ext_event().selected = (
 

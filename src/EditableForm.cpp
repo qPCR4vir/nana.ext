@@ -21,15 +21,20 @@
 //{ o<<" rect("<<r.x<<","<<r.y<<","<<r.width <<","<<r.height <<")\n"; return o;}
 //
 
-    EditableWidget::EditableWidget  ( nana::window EdWd_owner,   ///< The ownwer of the form or panel: nullptr for "primary" forms 
+
+bool EnablingEditing::_globalBlockInteratctiveEdition = false;
+bool EnablingEditing::_globalBlockConfig = false;
+
+
+    EditableWidget::EditableWidget  ( nana::window EdWd_owner,   ///< The owner of the form or panel: nullptr for "primary" forms 
                                       nana::widget& thisEdWd,  ///< the form or panel, owner of place and all other widgets of the editable widget
-                                      std::string Titel, 
+                                      std::string Title, 
                                       const std::string &DefLayoutFileName)
             :  
                _EdWd_owner (EdWd_owner), 
                _thisEdWd   (thisEdWd), 
                _place      (_thisEdWd),    
-               _Titel(std::move(Titel)),        //   ???
+               _Titel(std::move(Title)),        //   ???
                _DefLayoutFileName(DefLayoutFileName) 
      {  
          //nana::rectangle r;  //debugg
@@ -50,7 +55,6 @@
    //     }
         //std::cerr<<"\nConstructing EditableWidget: "; // debbug
         //std::wcerr<< this->_Titel; // debbug
-
    //     ThisWidget.make_event<nana::events::unload>([this](const nana::eventinfo& ei)
    //     {
    //     std::cerr<<"\nClosing EditableWidget: "; // debbug
@@ -68,13 +72,13 @@
         InitMenu   (_menuProgram);
     }
 
-	CompoWidget::CompoWidget (nana::window parent,            ///< The ownwer of the CompoWidget, that is: the owner of the CompoWidget´s form or panel 
-                              std::string Titel, 
+	CompoWidget::CompoWidget (nana::window parent,            ///< The owner of the CompoWidget, that is: the owner of the CompoWidget´s form or panel 
+                              std::string Title, 
                               const std::string &DefLayoutFileName)
         :  nana::panel<false>(parent),  
-           EditableWidget( parent,                                  ///< The ownwer of the form or panel 
+           EditableWidget( parent,                                  ///< The owner of the form or panel 
                            *this,               ///< the form or panel, owner of place and all other widgets of the editable widget
-                           Titel, DefLayoutFileName)
+                           Title, DefLayoutFileName)
     {
         
             //std::cerr<<"\nConstructing CompoWidget: "; // debbug
@@ -96,13 +100,13 @@
 
     }
 
-EditableForm::EditableForm ( nana::window EdWd_owner,                       ///< The ownwer of the form or panel 
+EditableForm::EditableForm ( nana::window EdWd_owner,   ///< The owner of the form or panel 
                              nana::widget& thisEdWd,    ///< the form or panel, owner of place and all other widgets of the editable widget
-                             std::string Titel, 
+                             std::string Title, 
                              const std::string &DefLayoutFileName         ) 
-            :  EditableWidget( EdWd_owner,                                  ///< The ownwer of the form or panel 
+            :  EditableWidget( EdWd_owner,                                  ///< The owner of the form or panel 
                                thisEdWd,               ///< the form or panel, owner of place and all other widgets of the editable widget
-                               Titel, DefLayoutFileName),
+                               Title, DefLayoutFileName),
               _menuBar (thisEdWd), 
               _menuProgramInBar(nullptr)
      {
@@ -124,9 +128,6 @@ EditableForm::EditableForm ( nana::window EdWd_owner,                       ///<
    //         }
    //     });
     }
-
-bool EnablingEditing::_globalBlockInteratctiveEdition=false;
-bool EnablingEditing::_globalBlockConfig             =false;
 
 void EditableWidget::EditMyLayout(/*nana::widget & EdWd_own, nana::widget &EdLyF_own*/)
 		{
@@ -213,7 +214,7 @@ void EditLayout_Form::MakeResponsive()
          //InitMenu    ();
         _menuProgramInBar->append_splitter();
 		_menuProgramInBar->append ("&Apply Layout to calling windows"        ,[&](nana::menu::item_proxy& ip) {ReLayout ();});
-		_menuProgramInBar->append ("&Restet Default Layout to calling windows",[&](nana::menu::item_proxy& ip) {ReloadDef();});
+		_menuProgramInBar->append ("&Reset Default Layout to calling windows",[&](nana::menu::item_proxy& ip) {ReloadDef();});
 
         SelectClickableWidget( _textBox, *_menuProgramInBar );
         SelectClickableWidget( _menuBar, *_menuProgramInBar);
@@ -283,8 +284,6 @@ void EditLayout_Form::toCppCode()
     _textBox.copy();
     _textBox.show();
 }
-
-
 
 void EditLayout_Form::ReloadDef()
 {
