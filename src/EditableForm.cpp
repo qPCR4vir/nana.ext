@@ -226,7 +226,7 @@ void EditLayout_Form::MakeResponsive()
         _ReCollocate.events().click([&](){ ReLayout()  ;}   ); 
 
         _textBox.set_highlight("place_keywords", nana::colors::blue, nana::colors::white);
-        _textBox.set_keywords ("place_keywords", true,true, { "arrange", "collapse", "gap", "grid", 
+        _textBox.set_keywords ("place_keywords", true,true, { "arrange", "collapse", "gap", "grid", "width", "height",
                                 "margin", "min", "max", "repeated", "variable", "vertical", "vert", "weight", "horizontal" });
         _textBox.set_highlight("place_simbols", nana::colors::blue, nana::colors::yellow);
         _textBox.set_keywords ("place_simbols", true,false, {"<",">", "|", "%", "[","]" });
