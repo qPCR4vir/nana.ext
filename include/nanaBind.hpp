@@ -270,9 +270,9 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
         SetDef();
     } 
 
-    void	UpDateForm(	 )	override {     updateForm(getProgVal(), _p.Unit() ); 
+    void	UpDateForm(	 )	override {     updateForm(Bind_CParamRang<Num>::getProgVal(), Bind_CParamRang<Num>::_p.Unit() );
                                      }
-	void	UpDateProg(	 )	override {     updateProg(Num (getFormVal(   _p.Unit()))); 
+	void	UpDateProg(	 )	override {     updateProg(                 Num (getFormVal(   Bind_CParamRang<Num>::_p.Unit())));
                                      }
 };
 
@@ -302,8 +302,8 @@ class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRan
         SetDef();
     } 
 
-    void UpDateForm()override { updateForm(              getProgVal() )         ;}
-	void UpDateProg()override { updateProg(std::string(  getFormVal() ).c_str());}
+    void UpDateForm()override {                                 updateForm(              getProgVal() )         ;}
+	void UpDateProg()override { Bind_CParamEnumRange<enumType>::updateProg(std::string(  getFormVal() ).c_str());}
 };
 
 /// \todo eliminate charset use?
