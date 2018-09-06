@@ -10,7 +10,7 @@
 *  @brief
 */
 
-#include "../include/number.hpp"
+#include <number.hpp>
 
 namespace nana { 
 

@@ -24,7 +24,7 @@
 #pragma warning(disable : 4996)
 
 //  From: https://github.com/qPCR4vir/nana.ext
-#include <../../nana.ext/include/EditableForm.hpp>
+#include <EditableForm.hpp>
 #include <Units.hpp>
 
 
