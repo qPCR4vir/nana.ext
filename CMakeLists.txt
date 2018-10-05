@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(nana_ext VERSION      0.0.2
         DESCRIPTION "Some extentions for the nana C++ GUI library"
         HOMEPAGE_URL https://github.com/qPCR4vir/nana.ext
@@ -26,7 +26,11 @@ target_link_libraries(nana_ext PUBLIC progparam )
 include(${CMAKE_CURRENT_LIST_DIR}/../nana/CMakeLists.txt)
 target_link_libraries(nana_ext PUBLIC nana )
 
-include(CMakePrintHelpers)
-cmake_print_properties(TARGETS nana_ext  PROPERTIES
-        COMPILE_DEFINITIONS   COMPILE_OPTIONS    COMPILE_FLAGS  LINK_LIBRARIES
-        INCLUDE_DIRECTORIES   INSTALL_NAME_DIR   LINK_FLAGS     VERSION)
+if (NANA_CMAKE_VERBOSE_PREPROCESSOR)
+
+    include(CMakePrintHelpers)
+    cmake_print_properties(TARGETS nana_ext  PROPERTIES
+            COMPILE_DEFINITIONS   COMPILE_OPTIONS    COMPILE_FLAGS  LINK_LIBRARIES
+            INCLUDE_DIRECTORIES   INSTALL_NAME_DIR   LINK_FLAGS     VERSION)
+
+endif()
