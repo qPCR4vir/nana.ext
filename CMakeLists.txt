@@ -19,11 +19,11 @@ target_sources            (nana_ext PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/src/number.cpp)
 
 
-include(${CMAKE_CURRENT_LIST_DIR}/../../ProgParam/CMakeLists.txt)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../ProgParam ${CMAKE_CURRENT_LIST_DIR}/../../cmake-progparam-build-${CMAKE_BUILD_TYPE} )
 target_link_libraries(nana_ext PUBLIC progparam )
 
 
-include(${CMAKE_CURRENT_LIST_DIR}/../nana/CMakeLists.txt)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../nana ${CMAKE_CURRENT_LIST_DIR}/../cmake-nana-build-${CMAKE_BUILD_TYPE} )
 target_link_libraries(nana_ext PUBLIC nana )
 
 if (NANA_CMAKE_VERBOSE_PREPROCESSOR)
