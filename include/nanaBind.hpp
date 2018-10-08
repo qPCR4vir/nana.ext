@@ -272,7 +272,7 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
 
     void	UpDateForm(	 )	override {     updateForm(Bind_CParamRang<Num>::getProgVal(), Bind_CParamRang<Num>::_p.Unit() );
                                      }
-	void	UpDateProg(	 )	override {     updateProg(                 Num (getFormVal(   Bind_CParamRang<Num>::_p.Unit())));
+	void	UpDateProg(	 )	override {     Bind_CParamRang<Num>::updateProg(    Num (getFormVal(   Bind_CParamRang<Num>::_p.Unit())));
                                      }
 };
 
@@ -302,7 +302,7 @@ class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRan
         SetDef();
     } 
 
-    void UpDateForm()override {                                 updateForm(              getProgVal() )         ;}
+    void UpDateForm()override {                                 updateForm(Bind_CParamEnumRange<enumType>::getProgVal() )         ;}
 	void UpDateProg()override { Bind_CParamEnumRange<enumType>::updateProg(std::string(  getFormVal() ).c_str());}
 };
 
@@ -378,10 +378,10 @@ class Bind_Param_Widget : public     Bind_Param, public Bind_Widget
     //Bind_Widget & _w;
 public:
     template <class Param,class Widget> 
-    Bind_Param_Widget (Param &p, Widget& w):Bind_Param(p),Bind_Widget(w){SetDef();} 
+    Bind_Param_Widget (Param &p, Widget& w):Bind_Param(p),Bind_Widget(w){Bind_Param::SetDef();}
 
-    void	UpDateForm(	 )	override {         updateForm(getProgVal()); }
-	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
+    void	UpDateForm(	 )	override {         updateForm(Bind_Param::getProgVal()); }
+	void	UpDateProg(	 )	override {         updateProg(Bind_Widget::getFormVal()); }
 
 };
             template <class Bind_Param,class Bind_Widget,class Param,class Widget> 
