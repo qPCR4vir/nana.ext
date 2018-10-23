@@ -429,7 +429,7 @@ class FilePickBox : public  CompoWidget
 
 	void		 FileName(const std::string&  FileName)
     { 
-        _fileName.push_back(FileName).option(_fileName.the_number_of_options());
+        _fileName.push_back(FileName).option(_fileName.the_number_of_options()-1);
         nana::API::update_window (_fileName);
     }
 
