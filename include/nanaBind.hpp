@@ -182,9 +182,9 @@ class Bind_checkbox : public nanaWidgetBind
  public:				
     Bind_checkbox ( nana::checkbox& c):nanaWidgetBind(c){} 
 
-    void updateForm(bool val){  static_cast <nana::checkbox&>(_w).check  (val); nana::API::update_window (_w);
+    void updateForm(bool val){  dynamic_cast  <nana::checkbox&>(_w).check  (val); nana::API::update_window (_w);
                              }
-    bool getFormVal()/*const*/ {  return  static_cast <nana::checkbox&>(_w).checked(   ); 
+    bool getFormVal()/*const*/ {  return  dynamic_cast  <nana::checkbox&>(_w).checked(   );
                                }
 };
 
@@ -194,8 +194,8 @@ class Bind_NumUpDw : public nanaWidgetBind
  public:				
     Bind_NumUpDw ( nana::NumerUpDown & c):nanaWidgetBind(c,c._num){} 
 
-    void   updateForm(double val){  static_cast <nana::NumerUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
-    double getFormVal(  ){  return  static_cast <nana::NumerUpDown&>(_w).Value  (   ); }
+    void   updateForm(double val){ dynamic_cast  <nana::NumerUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
+    double getFormVal(  ){  return  dynamic_cast  <nana::NumerUpDown&>(_w).Value  (   ); }
 };
 
 /// \todo: adapt to new nana::spinbox
@@ -204,13 +204,13 @@ class Bind_UnitUpDw : public nanaWidgetBind
  public:				
     Bind_UnitUpDw ( nana::NumUnitUpDown & c):nanaWidgetBind(c    ,c._num._num){} 
 
-    void   updateForm(double val){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val); nana::API::update_window (_w);
+    void   updateForm(double val){  dynamic_cast  <nana::NumUnitUpDown&>(_w).Value  (val); nana::API::update_window (_w);
                                  }
-    double getFormVal(  )/*const*/{  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (   ); 
+    double getFormVal(  )/*const*/{  return  dynamic_cast  <nana::NumUnitUpDown&>(_w).Value  (   );
                                   }
-    void   updateForm(double val, const RTunits::unit_name &un){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val, un);nana::API::update_window (_w);
+    void   updateForm(double val, const RTunits::unit_name &un){  dynamic_cast  <nana::NumUnitUpDown&>(_w).Value  (val, un);nana::API::update_window (_w);
                                                              }
-    double getFormVal/*const*/(const RTunits::unit_name &un    ){  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (un     );
+    double getFormVal/*const*/(const RTunits::unit_name &un    ){  return  dynamic_cast  <nana::NumUnitUpDown&>(_w).Value  (un     );
                                                               }
 };
 
@@ -221,10 +221,10 @@ class Bind_FilePickBox : public nanaWidgetBind
 
     void         updateForm(std::string file)
     {  
-        static_cast <FilePickBox&>(_w).FileNameOnly (file);
+		dynamic_cast  <FilePickBox&>(_w).FileNameOnly (file);
         nana::API::update_window (_w); 
     }
-    std::string getFormVal(  ){  return  static_cast <FilePickBox&>(_w).FileName  (   ); }
+    std::string getFormVal(  ){  return  dynamic_cast  <FilePickBox&>(_w).FileName  (   ); }
 };
 
 class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString  
