@@ -364,20 +364,28 @@ class FilePickBox : public  CompoWidget
 	nana::button	 Pick    {*this, "..."};
 
 	nana::filebox   fb_p    {*this, true};
+    nana::folderbox folb_p  {*this};
 
     void SetDefLayout       () override ;
     void AsignWidgetToFields() override ;
 	void		pick(const std::string &file_tip="");
 
  protected:
-	void select_file(nana::filebox&  fb, const std::string &action, const std::string &file_tip, bool select_only=false);
-
+	void select_file(nana::filebox&     fb,
+	                 const std::string &action,
+	                 const std::string &file_tip,
+	                 bool select_only=false);
+    void select_dir (nana::folderbox&     fb,
+                     const std::string &action,
+                     const std::string &file_tip,
+                     bool select_only=false);
     bool                _user_selected { false }, 
 		                _validate_only { false },
                         _canceled      { false };
 
  public:
-	FilePickBox     (	nana::window parent, 
+    bool            folder {false};
+	FilePickBox     (	nana::window parent,
 						const std::string   &label,
 						const std::string   &DefLayoutFileName=""
 		);
@@ -409,8 +417,7 @@ class FilePickBox : public  CompoWidget
 	{	 
         add_validate([this, slt](/*nana::combox&cb*/)
                     { 
-                      //if( this->UserSelected() )   
-                          slt ( nana::charset ( this->FileName() )) ; 
+                      slt ( this->FileName() ) ;
                       return true;   // or catch exception to said false
                     } ); 
         //_fileName.ext_event().selected = (
@@ -504,7 +511,7 @@ public:
         add_validated([this, opn](/*nana::combox&cb*/)
                     { 
                       if( this->UserSelected() )   
-                          opn ( nana::charset ( this->FileName() )) ; 
+                          opn ( this->FileName() ) ;
                       return true;
                     } ); 
         

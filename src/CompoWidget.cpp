@@ -81,8 +81,30 @@ void FilePickBox::pick(const std::string &file_tip)
 {
     bool  vo{ true };
     std::swap(vo,_validate_only);
-    select_file( fb_p, (""), file_tip,true);
+    if (folder)
+        select_dir(folb_p, (""), file_tip,true);
+    else
+        select_file( fb_p, (""), file_tip,true);
     std::swap(vo,_validate_only);
+}
+void FilePickBox::select_dir(nana::folderbox   &fb,
+                             const std::string &action,
+                             const std::string &file_tip,
+                             bool               select_only)
+{
+    std::string old_t;
+    //if (!action.empty())
+    //    old_t=fb.title(action);
+    //fb.init_file(file_tip);
+    if(auto path=fb())
+    {
+        select_only ? FileNameOnly (path.value().string()) : FileNameOpen (path.value().string());
+        _canceled= false;
+    }
+    else
+        _canceled= true;
+    //if (!action.empty()) // revisar !!
+    //    fb.title(old_t);
 }
 void FilePickBox::select_file(nana::filebox&  fb, const std::string &action, const std::string &file_tip, bool select_only)
 {
