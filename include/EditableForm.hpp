@@ -436,8 +436,13 @@ class FilePickBox : public  CompoWidget
 
 	void		 FileName(const std::string&  FileName)
     { 
-        _fileName.push_back(FileName).option(_fileName.the_number_of_options()-1);
-        nana::API::update_window (_fileName);
+		/*std::cout << "/n Setting filename: " << FileName << " in FilePickBox: "
+			<< this->_Titel;
+		std::cout << " /n Original caption: " << _fileName.caption();*/
+		_fileName.push_back(FileName); 
+		_fileName.option(_fileName.the_number_of_options() - 1);
+        //std::cout << " /n Final caption: " << _fileName.caption();
+		nana::API::update_window (_fileName);
     }
 
 	void		 FileNameOnly(const std::string&  FileN )  /// validate only
