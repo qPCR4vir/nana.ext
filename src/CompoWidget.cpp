@@ -96,9 +96,10 @@ void FilePickBox::select_dir(nana::folderbox   &fb,
     //if (!action.empty())
     //    old_t=fb.title(action);
     //fb.init_file(file_tip);
-    if(auto path=fb())
+
+    if(auto path=fb(); ! path.empty())
     {
-        select_only ? FileNameOnly (path.value().string()) : FileNameOpen (path.value().string());
+        select_only ? FileNameOnly (path[0].u8string()) : FileNameOpen (path[0].u8string());
         _canceled= false;
     }
     else
@@ -108,19 +109,24 @@ void FilePickBox::select_dir(nana::folderbox   &fb,
 }
 void FilePickBox::select_file(nana::filebox&  fb, const std::string &action, const std::string &file_tip, bool select_only)
 {
-    std::string old_t;
-    if (!action.empty())
-        old_t=fb.title(action);
+    //std::string old_t;
+    //if (!action.empty())
+    //{
+    //    //old_t = fb.title();
+    //    fb.title(action);
+    //}
+
     fb.init_file(file_tip); 
-	if(fb())  
+	if(auto path=fb(); ! path.empty())
 	{	
-        select_only ? FileNameOnly (fb.file()) : FileNameOpen (fb.file());
+        select_only ? FileNameOnly (path[0].u8string()) : FileNameOpen (path[0].u8string());
         _canceled= false;
     }
     else 
         _canceled= true;
-    if (!action.empty()) // revisar !!
-        fb.title(old_t);
+
+    /*if (!action.empty()) // revisar !!
+        fb.title(old_t);*/
  }
 
 
