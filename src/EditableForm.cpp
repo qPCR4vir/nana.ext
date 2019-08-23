@@ -26,16 +26,13 @@ bool EnablingEditing::_globalBlockInteratctiveEdition = false;
 bool EnablingEditing::_globalBlockConfig = false;
 
 
-    EditableWidget::EditableWidget  ( nana::window EdWd_owner,   ///< The owner of the form or panel: nullptr for "primary" forms 
-                                      nana::widget& thisEdWd,  ///< the form or panel, owner of place and all other widgets of the editable widget
+    EditableWidget::EditableWidget  ( nana::widget& EdWd,  ///< the form or panel, owner of place and all other widgets of the editable widget
                                       std::string Title, 
-                                      const std::string &DefLayoutFileName)
+									  const std::filesystem::path &DefLayout_FileName)
             :  
-               _EdWd_owner (EdWd_owner), 
-               _thisEdWd   (thisEdWd), 
-               _place      (_thisEdWd),    
+               _EdWd       ( EdWd), 
                _Titel(std::move(Title)),        //   ???
-               _DefLayoutFileName(DefLayoutFileName) 
+               _DefLayout_FileName(DefLayout_FileName)
      {  
          //nana::rectangle r;  //debugg
       //  r=nana::API::window_size(ThisWidget);  //debugg
@@ -68,7 +65,7 @@ bool EnablingEditing::_globalBlockConfig = false;
    //         }
    //     });
 
-        _thisEdWd.caption(_Titel);       //   ???
+        _EdWd.caption(_Titel);       //   ???
         InitMenu   (_menuProgram);
     }
 
@@ -156,8 +153,8 @@ EditableWidget::~EditableWidget()
 
 
 EditLayout_Form::EditLayout_Form  (	EditableWidget &EdWd_owner, int i)
-		:nana::form (EdWd_owner._thisEdWd , nana::rectangle( nana::point(300,100), nana::size(500,300) )),
-         EditableForm ((EdWd_owner._thisEdWd), *this,  "Editing Layout of: ", "Layout_Form.lay.txt"),
+		:nana::form (EdWd_owner._EdWd , nana::rectangle( nana::point(300,100), nana::size(500,300) )),
+         EditableForm ((EdWd_owner._EdWd), *this,  "Editing Layout of: ", "Layout_Form.lay.txt"),
          _owner(EdWd_owner)
 	{	
         caption(_Titel += _owner._Titel) ;  
@@ -168,17 +165,17 @@ EditLayout_Form::EditLayout_Form  (	EditableWidget &EdWd_owner, int i)
 		_OSbx.add_filter("Layout File", "*.lay.txt");
 
 	    if   ( _owner._myLayout.empty())    
-        {    if (! _owner._DefLayoutFileName.empty())
-             {   _OSbx.FileName	(   _owner._DefLayoutFileName  );
-                 OpenFileN( _owner._DefLayoutFileName );
+        {    if (! _owner._DefLayout_FileName.empty())
+             {   _OSbx.FileName	(   _owner._DefLayout_FileName  );
+                 OpenFileN( _owner._DefLayout_FileName );
              }
         } else   		          
         {   _textBox.append(_owner._myLayout,false );
             _textBox.select(true);
             _textBox.show();
 
-             if (! _owner._DefLayoutFileName.empty())
-                _OSbx.FileName	(   _owner._DefLayoutFileName  );
+             if (! _owner._DefLayout_FileName.empty())
+                _OSbx.FileName	(   _owner._DefLayout_FileName  );
         }
 
 		MakeResponsive();

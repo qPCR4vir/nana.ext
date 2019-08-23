@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2013-2016, Ariel Vina Rodriguez ( arielvina@yahoo.es )
+* Copyright (C) 2013-2019, Ariel Vina Rodriguez ( arielvina@yahoo.es )
 *
 *	Distributed under the Boost Software License, Version 1.0.
 *	(See accompanying file LICENSE_1_0.txt or copy at
@@ -26,7 +26,6 @@
 #include <fstream> 
 #include <cassert>
 
-// from: https://github.com/cnjinhao/nana
 #include <nana/gui/wvl.hpp>
 #include <nana/gui/widgets/menubar.hpp>
 #include <nana/gui/widgets/textbox.hpp>
@@ -97,10 +96,9 @@ class EditLayout_Form;
 class EditableWidget: public EnablingEditing
 {
  public:
-    EditableWidget ( nana::window  EdWd_owner,    ///< The owner of the form (if any) or panel 
-                     nana::widget& thisEdWd,      ///< the form or panel, owner of place and all other widgets of the editable widget
-                     std::string Titel, 
-                     const std::string &DefLayoutFileName=""           );
+    EditableWidget ( nana::widget& thisEdWd,      ///< the form or panel, owner of place and all other widgets of the editable widget
+                     std::string Titel,			  ///<  todo: we need this??	
+                     const std::filesystem::path &DefLayout_FileName=""           );
 
     static  void Click(nana::window w)
 		{
@@ -111,16 +109,18 @@ class EditableWidget: public EnablingEditing
 			//ei.by_mouse = true; //    ????    .evt_code = nana::event_code::mouse_down;			// ei.pos.x=  ei.pos.y = 1;			// ei.left_button = true;			// ei.ctrl = ei.shift = false;
 			nana::API::emit_event(nana::event_code::click,w, ei);
 		}
-
-    nana::window    _EdWd_owner ;              ///< The owner of the form or panel 
-    nana::widget   &_thisEdWd;                 ///< the form or panel, owner of place and all other widgets of the editable widget
-	std::string	    _Titel;                    //  ????
+	// todo: public???
+    nana::widget   &_EdWd;                 ///< the form or panel, owner of place and all other widgets of the editable widget
+	nana::place	    _place{_EdWd};                         //      nana::vplace	_place;
+	std::filesystem::path     _DefLayout_FileName;
     std::string     _myLayout, _DefLayout;
-    std::string     _DefLayoutFileName;	
-	nana::menu	    _menuProgram;
-    nana::place	    _place;                         //      nana::vplace	_place;
 	EditLayout_Form*    _myEdLayForm{nullptr};    	//std::unique_ptr <EditLayout_Form> _myEdLayForm;
+	std::string	    _Titel;                    //  ???? todo: eliminate this
 
+	/// another function: menu --> todo: move to other class
+	nana::menu	    _menuProgram;
+
+	/// another function: validation --> todo: move to other class
     std::vector<std::function<bool(void)>> _validate, _validated;
     bool changed{false}, validated{true};
     bool validate_only(/*bool validate_only=true*/)
@@ -158,14 +158,14 @@ class EditableWidget: public EnablingEditing
               Validated();    /// return ?????
         return validate;
     }
-virtual    void add_validate(const std::function<bool(void)>& v)
-    {
-        _validate.push_back (v); 
-    }
-virtual    void add_validated(const std::function<bool(void)>& v)
-    {
-        _validated.push_back (v); 
-    }
+	virtual    void add_validate(const std::function<bool(void)>& v)
+		{
+			_validate.push_back (v); 
+		}
+	virtual    void add_validated(const std::function<bool(void)>& v)
+		{
+			_validated.push_back (v); 
+		}
 
     virtual     ~EditableWidget     ();
     virtual void SetDefLayout       ()=0;
@@ -176,7 +176,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         SetDefLayout   ();
         _myLayout= _DefLayout;
         std::string lay_from_file;
-        readLayout( _DefLayoutFileName, lay_from_file);
+        readLayout( _DefLayout_FileName.string(), lay_from_file);
         if (lay_from_file.empty() )
             lay_from_file=_DefLayout;
 
@@ -240,22 +240,22 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(_EdWd_owner, "std::exception during EditableWidget ReCollocation: ")
+             (nana::msgbox(_EdWd, "std::exception during EditableWidget ReCollocation: ")
                     .icon(nana::msgbox::icon_error)
-                                 <<"\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 <<"\n   in widget: "  << nana::API::window_caption( _EdWd)
                                  <<"\n   Title: "      << _Titel
-                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd)
                                  <<"\n   trying to layout: \n "   << _myLayout
                                  <<"\n   occurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(_EdWd_owner, "An uncaptured exception during EditableWidget ReCollocation: ")
+             (nana::msgbox(_EdWd, "An uncaptured exception during EditableWidget ReCollocation: ")
                     .icon(nana::msgbox::icon_error)
-                                 <<"\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 <<"\n   in widget: "  << nana::API::window_caption( _EdWd)
                                  <<"\n   Title: "      << _Titel
-                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 <<"\n   owned by: "   << nana::API::window_caption(_EdWd)
                                  <<"\n   trying to layout: \n "   << _myLayout
              ).show();
 	    }
@@ -278,22 +278,22 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         }
         catch(std::exception& e)
         {
-             (nana::msgbox(_EdWd_owner, "std::exception during EditableWidget InitDiv: ")
+             (nana::msgbox(_EdWd, "std::exception during EditableWidget InitDiv: ")
                     .icon(nana::msgbox::icon_error)
-                                 << "\n   in widget: "  << nana::API::window_caption( _thisEdWd)
+                                 << "\n   in widget: "  << nana::API::window_caption( _EdWd)
                                  << "\n   Title: "      << _Titel
-                                 << "\n   owned by: "   << nana::API::window_caption(_EdWd_owner)
+                                 << "\n   owned by: "   << nana::API::window_caption(_EdWd)
                                  << "\n   trying to layout: \n "   << _myLayout
                                  << "\n   occurred exception: "     << e.what() 
              ).show();
         }
 		catch(...)
 		{
-             (nana::msgbox(_EdWd_owner,  "An uncaptured exception during EditableWidget InitDiv: ") 
+             (nana::msgbox(_EdWd,  "An uncaptured exception during EditableWidget InitDiv: ") 
                     .icon(nana::msgbox::icon_error)
-                                 << "\n   in widget: "   << nana::API::window_caption( _thisEdWd)
+                                 << "\n   in widget: "   << nana::API::window_caption( _EdWd)
                                  << "\n   Title: "       << _Titel
-                                 << "\n   owned by: "    << nana::API::window_caption(_EdWd_owner)
+                                 << "\n   owned by: "    << nana::API::window_caption(_EdWd)
                                  << "\n   trying to layout: \n "    << _myLayout
              ).show();
 	    }
