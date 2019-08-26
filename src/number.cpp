@@ -14,7 +14,7 @@
 
 namespace nana { 
 
-NumerUpDown::NumerUpDown (  widget &parent_,      const std::string &label,
+NumberUpDown::NumberUpDown (  widget &parent_,      const std::string &label,
                             double val,           double min, double max, 
                             const std::string   &DefFileName/*=("NumUpDown.VertCenter.lay.txt")*/, 
                             double step/*=1*/,    unsigned width/*=6*/,    unsigned decimals/*=2*/  ) 
@@ -38,7 +38,7 @@ NumerUpDown::NumerUpDown (  widget &parent_,      const std::string &label,
 
 		_num.events().focus([&](const arg_focus& ei)
 		       {  
-		           //std::cerr << std::endl<< (ei.getting ? "getting ":"losing ") << "Focus: , NumerUpDown: " << _label.caption() << std::endl;
+		           //std::cerr << std::endl<< (ei.getting ? "getting ":"losing ") << "Focus: , NumberUpDown: " << _label.caption() << std::endl;
 		           if ( !ei.getting )
 		           {
 		               //std::cerr   << "And validating: " << _val << "Cap:" << _num.caption ());
@@ -53,14 +53,14 @@ NumerUpDown::NumerUpDown (  widget &parent_,      const std::string &label,
 
          //_num.events().focus([&](const arg_focus& ei)
          //       {  
-         //           std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , NumerUpDown: ";
+         //           std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , NumberUpDown: ";
          //           std::wcerr<< _Titel << std::endl;
          //           //if (!ei.focus.getting) 
          //           //    validate_edit( );
          //       }); 
          //_num.events().focus([&](const arg_focus& ei)
          //       {  
-         //           std::cerr << std::endl<< (ei.getting ? "getting ":"losing ") << "Focus: , NumerUpDown: " << _label.caption() << std::endl;
+         //           std::cerr << std::endl<< (ei.getting ? "getting ":"losing ") << "Focus: , NumberUpDown: " << _label.caption() << std::endl;
          //           if ( !ei.getting )
          //           {
          //               std::cerr   << "And validating: " << _val << "Cap:" << std::string(charset(_num.caption ()));
@@ -69,7 +69,7 @@ NumerUpDown::NumerUpDown (  widget &parent_,      const std::string &label,
          //       }); 
 		 //_num.events().focus([&](const arg_focus& ei)
 		 //       {  
-         //           std::cerr<< "After " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , NumerUpDown: ";
+         //           std::cerr<< "After " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , NumberUpDown: ";
          //           std::wcerr<< _Titel << std::endl;
          //           //if (!ei.focus.getting) 
          //           //    validate_edit( );

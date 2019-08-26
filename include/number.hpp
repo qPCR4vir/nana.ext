@@ -105,7 +105,7 @@ class NumberBox : public textbox
 
 };
 
-class NumerUpDown : public  CompoWidget
+class NumberUpDown : public  CompoWidget
 {
     button      _up{*this, ("^")},   _down{*this, ("v")};  
     label       _label;
@@ -114,7 +114,7 @@ class NumerUpDown : public  CompoWidget
  public:
     textbox     _num{*this};
 
-   NumerUpDown (   widget &parent_,      const std::string &label,
+   NumberUpDown (   widget &parent_,      const std::string &label,
                     double val,           double min, double max, 
                     const std::string         &DefFileName=("NumUpDown.VertCenter.lay.txt"),
                     double step=1,       unsigned width=6,    unsigned decimals=2  );
@@ -171,9 +171,10 @@ class NumerUpDown : public  CompoWidget
 
     void SetDefLayout       () override
     {
-        _DefLayout= "  <       <vertical weight=60 <><label weight=15 gap=1><> >      \n"
-                    "          <vertical weight=50 <><Num weight=19><> >   \n"
-                    "          <vertical weight=30 <><UpDown weight=19><> > \n"
+        _DefLayout= "  <horizontal       "
+                    "          <width=60 vertical <><height=15 label gap=1><>  >   \n"
+                    "          <width=50 vertical <><height=19 Num        ><>  >   \n"
+                    "          <width=30 vertical <><height=19 UpDown     ><>  >   \n"
                     "  > " ;
     }
      void AsignWidgetToFields() override
@@ -236,7 +237,7 @@ class NumUnitUpDown : public CompoWidget
     //double      _val;
 	RTunits::unit_name _curr_un;
 public:
-    NumerUpDown _num; /// \todo: make private and provide a function to change the def lay, especially the length of the label
+    NumberUpDown _num; /// \todo: make private and provide a function to change the def lay, especially the length of the label
     UnitPicker  _unit; /// \todo: make private and provide a function to change the def lay, especially the length of the label
     NumUnitUpDown ( window wd,        
                     const std::string& label,
@@ -290,17 +291,18 @@ public:
 
          // redefine layout of this complete widget: NumUnitUpDown
         lay << "  <    \n"
-               "  <vertical   min="  << lab+15+n << "              Num                 >   \n"
-               "  <vertical   min="  << unit     << " <><vertical  Unit  weight=21><>  >   \n"
-               " > ";   
+               "    <vertical   min="  << lab+15+n << "              Num                  >   \n"
+               "    <vertical   min="  << unit     << " <>< height=21 vertical  Unit ><>  >   \n"
+               "  > ";
         _DefLayout = lay.str(); // move a copy
 
          // redefine layout of the NumUpDown part (inside the previous Num)
-        lay.str("  <           \n"); 
-        lay <<  "              \n"
-                "  <vertical weight="  <<  lab << "  <>< gap=1   label  weight=15> <>   >  \n"
-                "  <vertical weight="  <<  15  << "  <><vertical UpDown weight=21> <>   >  \n"
-                "  <vertical min="     <<  n   << "  <><         Num    weight=21> <>   >  \n"
+
+        lay.str("");
+        lay <<  " <horizontal                         \n"
+                "  <width="  <<  lab << "  vertical <><height=15 gap=1    label  ><>   >  \n"
+                "  <width="  <<  15  << "  vertical <><height=21 vertical UpDown ><>   >  \n"
+                "  <min="  <<  n   << "    vertical <><height=21          Num    ><>   >  \n"
                 " > ";
         _num._DefLayout = lay.str(); // move a copy
      }

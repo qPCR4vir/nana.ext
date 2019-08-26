@@ -67,8 +67,8 @@ namespace nana{
                 virtual double get_value ( int ref_percent = 1 ) const { return real (); }
                 virtual ~Number () {}
 
-                static num reset () ;// we need this?
-                static num assign ( int    i ); // we need this?
+                static num reset () ;            // we need this?
+                static num assign ( int    i );  // we need this?
                 static num assign ( double d );
                 static num assign_percent ( double d );
                 static num clear () { return reset (); }
@@ -99,11 +99,12 @@ namespace nana{
                 Kind kind_of ()     const override { return Kind::percent; }
                 double get_value ( int ref_percent = 1 ) const override { return  real ()*ref_percent; }
             };
-            num Number::reset () { return num{ new Number }; }
-            num Number::assign ( int    i ) { return num{ new Integer ( i ) }; }
-            num Number::assign ( double d ) { return num{ new Real ( d ) }; }
+            num Number::reset          (          ) { return num{ new Number        }; }
+            num Number::assign         ( int    i ) { return num{ new Integer ( i ) }; }
+            num Number::assign         ( double d ) { return num{ new Real    ( d ) }; }
             num Number::assign_percent ( double d ) { return num{ new Percent ( d ) }; }
         }//end namespace place_parts
+
         class number_t
         {	//number_t is used to store a number type variable
             //such as integer, real and percent. Essentially, percent is a typo of real.
@@ -246,7 +247,7 @@ namespace nana{
                     case '=':		        ++sp_;				return token::equal;
                     case '|':	            ++sp_;
                         readbytes = _m_number ( sp_, false );
-                        sp_ += readbytes;               return token::splitter;
+                        sp_      += readbytes;                  return token::splitter;
 
                     case '<':				++sp_;				return token::div_start;
                     case '>':				++sp_;				return token::div_end;
@@ -331,8 +332,7 @@ namespace nana{
                     else if ( idstr_ == "horizontal" )                          return token::horizontal;
                     else if ( idstr_ == "variable" )                            return token::variable;
                     else if ( idstr_ == "repeated" )                            return token::repeated;
-                    else if ( idstr_ == "gap"    ){ 
-                                                    _m_attr_reparray ();        return token::gap;    } 
+                    else if ( idstr_ == "gap"    ){ _m_attr_reparray ();        return token::gap;    }
                     else if ( idstr_ == "arrange"){ _m_attr_reparray ();        return token::arrange;} 
                     else if ( idstr_ == "grid" )
                             {      if ( token::equal != read () )
