@@ -192,10 +192,10 @@ class Bind_checkbox : public nanaWidgetBind
 class Bind_NumUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_NumUpDw ( nana::NumerUpDown & c):nanaWidgetBind(c,c._num){} 
+    Bind_NumUpDw ( nana::NumberUpDown & c):nanaWidgetBind(c,c._num){}
 
-    void   updateForm(double val){ dynamic_cast  <nana::NumerUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
-    double getFormVal(  ){  return  dynamic_cast  <nana::NumerUpDown&>(_w).Value  (   ); }
+    void   updateForm(double val){ dynamic_cast  <nana::NumberUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
+    double getFormVal(  ){  return  dynamic_cast  <nana::NumberUpDown&>(_w).Value  (   ); }
 };
 
 /// \todo: adapt to new nana::spinbox

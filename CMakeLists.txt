@@ -10,7 +10,7 @@ option(BUILD_SHARED_LIBS "Compile nana_ext as a shared library." OFF)
 #######################     Main setting of Nana targets, sources and installs
 
 add_library(nana_ext)
-target_compile_features   (nana_ext PUBLIC cxx_std_14)
+# target_compile_features   (nana_ext PUBLIC cxx_std_14)
 target_include_directories(nana_ext PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
 target_sources            (nana_ext PRIVATE
