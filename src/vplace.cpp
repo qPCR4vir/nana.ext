@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <../../nana.ext/include/vplace.hpp>
-#include <nana/gui/wvl.hpp>
+#include <nana/gui.hpp>
 #include <nana/gui/programming_interface.hpp>
 #include <iostream>    // temp, for debugging
 #include <nana/gui/widgets/label.hpp>
@@ -701,7 +701,7 @@ namespace nana{
         };
         struct comp_collapse
         {
-            bool operator()( const rectangle&a, const rectangle& b )
+            bool operator()( const rectangle&a, const rectangle& b )const noexcept
             {
                 //if ( a.overlap ( b ) ) return false;
                 // x >= r.right() || r.x >= right() || y >= r.bottom() || r.y >= bottom()
