@@ -99,7 +99,7 @@ void FilePickBox::select_dir(nana::folderbox   &fb,
 
     if(auto path=fb(); ! path.empty())
     {
-        select_only ? FileNameOnly (path[0].u8string()) : FileNameOpen (path[0].u8string());
+        select_only ? FileNameOnly (path[0].string()) : FileNameOpen (path[0].string());
         _canceled= false;
     }
     else
@@ -119,7 +119,7 @@ void FilePickBox::select_file(nana::filebox&  fb, const std::string &action, con
     fb.init_file(file_tip); 
 	if(auto path=fb(); ! path.empty())
 	{	
-        select_only ? FileNameOnly (path[0].u8string()) : FileNameOpen (path[0].u8string());
+        select_only ? FileNameOnly (path[0].string()) : FileNameOpen (path[0].string());
         _canceled= false;
     }
     else 

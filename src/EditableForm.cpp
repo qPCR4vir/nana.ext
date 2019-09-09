@@ -206,7 +206,7 @@ void EditLayout_Form::MakeResponsive()
 		_menuFile.append  ("&Open..."   ,[this](nana::menu::item_proxy& ip)  {  _OSbx.OpenClick(); } );
         _menuFile.append  ("&Save"      ,[this](nana::menu::item_proxy& ip)
         {  
-            ForceSave( _textBox.filename().u8string()  ) ;
+            ForceSave( _textBox.filename().string()  ) ;
         }   );
 		_menuFile.append  ("Save &As...",[this](nana::menu::item_proxy& ip)  {  _OSbx.SaveClick(); } );
          AddMenuProgram ();
@@ -235,7 +235,7 @@ void EditLayout_Form::MakeResponsive()
 void EditLayout_Form::on_edited()
 {
    std::string newTitel  = _Titel  +  " <" ;
-                newTitel +=  _textBox.filename().u8string() ;
+                newTitel +=  _textBox.filename().string() ;
                 newTitel += (_textBox.edited() ? " * >": ">"  );
     caption	( newTitel);
 }
@@ -314,7 +314,7 @@ void EditLayout_Form::OpenFileN(const std::string   &file)
             return;
         //std::wcout<<std::endl<<("OpenFileN: ")<<file<<std::endl;   // debbug
         if ( _textBox.edited () )
-            SaveFileN(_textBox.filename().u8string(), "Do you want to save your edited Layout?");
+            SaveFileN(_textBox.filename().string(), "Do you want to save your edited Layout?");
 		_textBox.load( file );
         _textBox.select(true);
         _textBox.show();
