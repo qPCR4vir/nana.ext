@@ -242,12 +242,12 @@ public:
     NumUnitUpDown ( window wd,        
                     const std::string& label,
                     double defVal,    double min,     double max,    
-                    const RTunits::unit_name& def  ,
+                    const RTunits::unit_name& def_unit  ,
                     const std::string& DefLayFile =("NumUnitUpDonw.Lay.txt"),
                     double step=1,   unsigned width=6, unsigned decimals=2)
         : CompoWidget (wd,label,("NumUnitUpDonw.Lay.txt")),
           _num(*this,label, defVal, min,max,("Vert-Invert.NumUpDonw.Lay.txt"),step,width,decimals),
-          _unit(*this, def), _curr_un(def) //_val(defVal)
+          _unit(*this, def_unit), _curr_un(def_unit) //_val(defVal)
     {
         _unit.events().selected([&](const nana::arg_combox& arg_cb)
                                     {
