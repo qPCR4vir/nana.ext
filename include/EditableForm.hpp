@@ -263,11 +263,13 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 	}
     void ReCollocate( )
     {
-        _place.div(_myLayout.c_str() );     
+        std::cout << "\nBefore _place.div(_myLayout.c_str() ); \n" << _myLayout;
+        _place.div(_myLayout.c_str() );
         //_place.div(_myLayout );
+        std::cout << "\nAfter _place.div(_myLayout.c_str() ); " ;
 
-	    _place.collocate ();
-
+        _place.collocate ();
+        std::cout << "\nAfter _place.collocate ();" ;
     }
     void InitDiv( std::string  Layout)
     {
@@ -331,9 +333,11 @@ class EditableForm: public EditableWidget
     void InitMyLayout       ()
 	{   try{
 				EditableWidget::InitMyLayout();
+                std::cout << " \nAfter EditableWidget::InitMyLayout() ;";
 				//_place.div(_myLayout.c_str ());     
 
 				ReCollocate( );
+                std::cout << " \nAfter EditableWidget::ReCollocate() ;";
 		}
 		catch (std::exception & e)
 		{
@@ -364,7 +368,7 @@ class FilePickBox : public  CompoWidget
 	nana::button	 Pick    {*this, "..."};
 
 	nana::filebox   fb_p    {*this, true};
-    nana::folderbox folb_p  {*this};
+    nana::folderbox folb_p  {*this, {},{}}; /// todo: review !!
 
     void SetDefLayout       () override ;
     void AsignWidgetToFields() override ;
