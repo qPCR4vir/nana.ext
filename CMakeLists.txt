@@ -16,7 +16,9 @@ target_include_directories(nana_ext PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_sources            (nana_ext PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/src/CompoWidget.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/EditableForm.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/number.cpp)
+        ${CMAKE_CURRENT_LIST_DIR}/src/number.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/vplace.cpp)
+
 
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../ProgParam ${CMAKE_CURRENT_LIST_DIR}/../../cmake-progparam-build-${CMAKE_BUILD_TYPE} )

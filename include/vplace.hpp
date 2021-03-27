@@ -1,7 +1,7 @@
 /**
 *	An Alternative Implementation of Place for Layout
 *  
-*	Copyright(C) 2003-2015 Jinhao(cnjinhao@hotmail.com)
+*	Copyright(C) 2003-2020 Jinhao(cnjinhao@hotmail.com)
 *
 *	Distributed under the Boost Software License, Version 1.0.
 *	(See accompanying file LICENSE_1_0.txt or copy at
@@ -10,17 +10,23 @@
 *	@file nana.ext\include\vplace.hpp
 *  @autor Ariel Vina-Rodriguez (qPCR4vir)
 *  @brief
-*  A "virtual" Implementation of Place for Layout
+*  A "virtual" Implementation of Place for Layout.
+*  NO implemented from place:
+*  - dock
+*  - splitter_renderer
+*  - Modifies a specified field.
 */
 
 
 #ifndef NANA_GUI_vPLACE_HPP
 #define NANA_GUI_vPLACE_HPP
+
 #include <utility>
-#include <nana/gui/basis.hpp>
-#include <limits>
-#include <nana\gui\programming_interface.hpp>
 #include <string>
+#include <limits>
+
+#include <nana/gui/basis.hpp>
+#include <nana\gui\programming_interface.hpp>
 
 
 namespace nana 
@@ -39,12 +45,37 @@ namespace nana
     class vplace		: noncopyable
 	{
 	  public:
+
 		vplace();  ///< First create the vplace.
              /// Optionally simultaneously attach it to a widget whose children you need to layout.
-		vplace(window parent_widget); 
+		explicit vplace(window parent_widget);
+
+        class error :public std::invalid_argument
+        {
+        public:
+            error(	const std::string& what,
+                      const vplace& plc,
+                      std::string            field = "unknown",
+                      std::string::size_type pos = std::string::npos);
+            std::string base_what;
+            std::string owner_caption;  ///< truncate caption (title) of the "placed" widget
+            std::string div_text;       ///< involved div_text
+            std::string field;          ///< posible field where the error ocurred.
+            std::string::size_type pos; ///< posible position in the div_text where the error ocurred. npos if unknown
+        };
+
         window     window_handle  () const; ///< You can get the handle to that widget anytime.
+
              /// Divide (format) the attached widget into fields, some of then with a name.
-		void         div      (const ::std::string & layout);     
+        void div(std::string div_text);			  ///< Divides the attached widget into fields. May throw place::error
+        const std::string& div() const noexcept;  ///< Returns div-text that depends on fields status.
+        static bool valid_field_name(const char* name)  ///< must begin with _a-zA-Z
+        {
+            return   name && (*name == '_'
+                  || (('a' <= *name && *name <= 'z')
+                  || ( 'A' <= *name && *name <= 'Z')));
+        }
+
              /// Select one of the named field to direct to it the next actions 
              /// You can think about the place as a kind of map of named fields you can modify
              /// You can use any name, but only the ones set in div() will actually shown.  

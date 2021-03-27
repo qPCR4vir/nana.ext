@@ -26,33 +26,37 @@
 #include <vector>
 #include <stdexcept>
 #include <cstring>
+#include <iostream>    // temp, for debugging
+
 #include <../../nana.ext/include/vplace.hpp>
 #include <nana/gui.hpp>
 #include <nana/gui/programming_interface.hpp>
-#include <iostream>    // temp, for debugging
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/dragger.hpp>
+#include <../../nana/source/gui/place_parts.hpp>
+
 
 std::ostream& operator<<(std::ostream& o, const nana::rectangle &r)
 { o<<" rect("<<r.x<<","<<r.y<<","<<r.width <<","<<r.height <<")\n"; return o; }
 
 namespace nana{
+    struct badname: vplace::error
+    {
+        explicit badname(  ::std::string           what,
+                           const vplace&           plc,
+                           const char*            name   = "unknown",
+                           std::string::size_type pos    = std::string::npos)
+                :vplace::error(what + ": bad field name '" + (name ? name : "nullptr") + "'.",
+                              plc, (name ? name : "nullptr"), pos)
+        {}
+    };
+    using place_parts::number_t;
+    using place_parts::repeated_array;
+
     namespace vplace_impl
     {
         namespace place_parts
         {
-            class splitter_interface
-            { public:	virtual ~splitter_interface () {} };
-
-            class splitter_dtrigger : public drawer_trigger
-            {};
-
-            template<bool IsLite>
-            class splitter
-                : public widget_object <typename std::conditional<IsLite, category::lite_widget_tag, category::widget_tag>::type, splitter_dtrigger>,
-                public splitter_interface
-            {};
-
             struct Number;
             using  num = std::unique_ptr<Number>;
             struct Number
@@ -105,136 +109,58 @@ namespace nana{
             num Number::assign_percent ( double d ) { return num{ new Percent ( d ) }; }
         }//end namespace place_parts
 
-        class number_t
-        {	//number_t is used to store a number type variable
-            //such as integer, real and percent. Essentially, percent is a typo of real.
-        public:
-            enum class kind {/*empty, */ none, integer, real, percent };
-            number_t () : kind_ ( kind::integer ) { value_.integer = 0; }
-
-            void reset () { kind_ = kind::none;		value_.integer = 0; }
-            bool is_negative () const
-            {
-                switch ( kind_ )
-                {
-                    case kind::integer:
-                        return (value_.integer < 0);
-                    case kind::real:
-                    case kind::percent:
-                        return (value_.real < 0);
-                    default:
-                        break;
-                }
-                return false;
-            }
-            bool is_none () const
-            {
-                return (kind::none == kind_);
-            }
-            bool is_not_none () const { return (kind::none != kind_); }
-            kind kind_of () const { return kind_; }
-            double get_value ( int ref_percent ) const
-            {
-                switch ( kind_ )
-                {
-                    case kind::integer:
-                        return value_.integer;
-                    case kind::real:
-                        return value_.real;
-                    case kind::percent:
-                        return value_.real * ref_percent;
-                    default:
-                        break;
-                }
-                return 0;
-            }
-            int integer () const
-            {
-                //        if( kind::empty  == kind_ )				//return 0;
-                if ( kind::integer == kind_ )				return value_.integer;
-                return static_cast<int>(value_.real);
-            }
-            double real () const
-            {
-                //        if( kind::empty  == kind_ )				//return 0;
-                if ( kind::integer == kind_ )				return value_.integer;
-                return value_.real;
-            }
-            void assign ( int i ) { kind_ = kind::integer;  value_.integer = i; }
-            void assign ( double d ) { kind_ = kind::real; 	value_.real = d; }
-            void assign_percent ( double d ) { kind_ = kind::percent; value_.real = d / 100; }
-            void clear () { *this = number_t (); }
-        private:
-            kind kind_;
-            union valueset { int integer; double real; }value_;
-        };//end class number_t
-        class repeated_array
-        {
-            bool                  repeated_ {false};
-            std::vector<number_t> values_;
-        public:
-            //repeated_array () {}
-            //repeated_array ( repeated_array&& rhs )
-            //    : repeated_ ( rhs.repeated_ ), values_ ( std::move ( rhs.values_ ) ) {}
-            //repeated_array& operator=(const repeated_array& rhs)
-            //{
-            //    if ( this != &rhs )
-            //    {
-            //        repeated_ = rhs.repeated_;
-            //        values_ = rhs.values_;
-            //    }
-            //    return *this;
-            //}
-            void        assign ( std::vector<number_t>&& c ) { values_ = std::move ( c ); }
-            bool        empty  () const { return values_.empty (); }
-            std::size_t size   () const { return size (); }
-            void        reset  ()  { repeated_ = false;   values_.clear ();           }
-            void        repeated() { repeated_ = true; }
-            void        push   ( const number_t& n ) { values_.emplace_back ( n ); }
-            number_t    at     ( std::size_t pos ) const
-            {
-                if ( values_.empty () )
-                    return{};
-
-                if ( repeated_ )
-                    pos %= values_.size ();
-                else if ( pos >= values_.size () )
-                    return{};
-
-                return values_[pos];
-            }
-            bool        pass_end( std::size_t pos ) const
-            {
-                return !repeated_ && pos>=values_.size () ;///// ???????? &&
-            }
-        };
         class tokenizer
         {
             std::string     div_str;   // for the future. kip a copy of the layout
-            const char*     divstr_;
-            const char*     sp_;
+            const char*     divstr_{}; // ???????
+            const char*     sp_{};
             std::string     idstr_;
             number_t        number_;
             std::vector<number_t> array_;
             repeated_array		  reparray_;
             std::vector<number_t> parameters_;
         public:
+            /// \todo add member full_what and overrider what() in internal exeptions
+            struct error : std::invalid_argument
+            {
+                error(std::string           what,
+                      const tokenizer&      tok)
+
+                        : std::invalid_argument{ what + " from tokenizer "  },
+                          pos{tok.pos()},
+                          div_str(tok.divstr_)
+                {}
+                std::string::size_type pos;
+                std::string            div_str;
+            };
+
             enum class token
             {
                 div_start, div_end, splitter,
-                identifier, vertical, horizontal, grid, number, array, reparray,
-                weight, gap, min, max, margin, arrange, variable, repeated, collapse, parameters,
+                identifier, fit, hfit, vfit, vertical, horizontal, grid, number, array, reparray,
+                weight, width, height, gap, min, max, margin, arrange, variable, repeated,
+                min_px, max_px, left, right, top, bottom, undisplayed, invisible, switchable,
+                collapse, parameters,
                 equal,
                 eof, error
             };
 
-            tokenizer ( const char* p ) : div_str ( p ), divstr_ ( div_str.c_str () ), sp_ ( div_str.c_str () ) {}
+            explicit tokenizer ( const char* p )
+                         : div_str ( p ),
+                           divstr_ ( div_str.c_str () ),
+                           sp_     ( div_str.c_str () )
+                         {}
 
-            const std::string&      idstr   () const { return idstr_;    }
-            number_t                number  () const { return number_;   }
-            std::vector<number_t>&  array   ()       { return array_;    }
-            repeated_array&         reparray()       { return reparray_; }
-            std::vector<number_t>&  parameters ()    { return parameters_; }
+            const std::string&      idstr   () const noexcept{ return idstr_;    }
+            number_t                number  () const noexcept{ return number_;   }
+            std::vector<number_t>&  array   ()       noexcept{ return array_;    }
+            repeated_array&         reparray()       noexcept{ return reparray_; }
+            std::vector<number_t>&  parameters ()    noexcept{ return parameters_; }
+
+            std::string::size_type pos() const noexcept
+            {
+                return static_cast<std::string::size_type>(sp_ - divstr_);
+            }
 
             token read ()
             {
@@ -262,8 +188,12 @@ namespace nana{
                         {
                             sp_ = _m_eat_whitespace ( sp_ );
                             auto tk = read ();
-                            if ( token::number != tk && token::variable != tk && token::repeated != tk )
-                                _m_throw_error ( "invalid array element" );
+                            if (    token::number   != tk
+                                 && token::variable != tk
+                                 && token::repeated != tk )
+
+                                throw error("invalid array element. Expected a number, variable or repaet", *this);
+
                             if ( !repeated )
                             {
                                 switch ( tk )
@@ -280,7 +210,7 @@ namespace nana{
                             char ch = *sp_++;
 
                             if ( ch == ']' )			return (repeated ? token::reparray : token::array);
-                            if ( ch != ',' )			_m_throw_error ( "invalid array" );
+                            if ( ch != ',' )			throw error("invalid array", *this);
                         }}
                         break;
                     case '(':
@@ -291,12 +221,12 @@ namespace nana{
                         while ( true )
                         {
                             if ( token::number == read () )		parameters_.push_back ( number_ );
-                            else						        _m_throw_error ( "invalid parameter." );
+                            else						        throw error("invalid parameter. Expected a number", *this);
 
                             sp_ = _m_eat_whitespace ( sp_ );
                             char ch = *sp_++;
-                            if ( ch == ')' )						return token::parameters;
-                            if ( ch != ',' )						_m_throw_error ( "invalid parameter." );
+                            if ( ch == ')' )					return token::parameters;
+                            if ( ch != ',' )					throw error("invalid parameter. Expected a ','", *this);
                         }
                         break;
                     case '.': case '-':
@@ -306,10 +236,11 @@ namespace nana{
                             if ( readbytes )			++readbytes;
                         } else 					readbytes = _m_number ( sp_, false );
 
-                        if ( readbytes ) { sp_ += readbytes; 	return token::number; } else    					        _m_throw_error ( *sp_ );
+                        if ( readbytes ) { sp_ += readbytes; 	return token::number; }
+                        else                                    throw error("invalid character '" + std::string(1, *sp_) + "'", *this);
                         break;
                     default:
-                        if ( isdigit ( *sp_ ) )
+                        if ( isdigit (static_cast<unsigned char>(*sp_) ) )
                         {
                             readbytes = _m_number ( sp_, false );
                             if ( readbytes ) { sp_ += readbytes; return token::number; }
@@ -317,38 +248,56 @@ namespace nana{
                         break;
                 }
 
-                if ( '_' == *sp_ || isalpha ( *sp_ ) )
+                if ( '_' == *sp_ || isalpha ( static_cast<unsigned char>(*sp_) ) )
                 {
                     const char * idstart = sp_++;
 
-                    while ( '_' == *sp_ || isalpha ( *sp_ ) || isalnum ( *sp_ ) ) 	++sp_;
+                    while ( '_' == *sp_ || isalpha ( static_cast<unsigned char>(*sp_) ) || isalnum ( static_cast<unsigned char>(*sp_) ) ) 	++sp_;
 
                     idstr_.assign ( idstart, sp_ );
 
-                    if      ( idstr_ == "weight"){ _m_attr_number_value ();     return token::weight; } 
-                    else if ( idstr_ == "min" )  { _m_attr_number_value ();     return token::min;    } 
-                    else if ( idstr_ == "max" )  { _m_attr_number_value ();     return token::max;    } 
+                    if      ( idstr_ == "weight"){ _m_attr_number_value ();     return token::weight; }
+                    else if ( idstr_ == "width") { _m_attr_number_value ();     return token::width;  }
+                    else if ( idstr_ == "height"){ _m_attr_number_value ();     return token::height; }
+                    else if ( idstr_ == "min" )  { _m_attr_number_value ();     return token::min;    }
+                    else if ( idstr_ == "max" )  { _m_attr_number_value ();     return token::max;    }
+                    else if ( idstr_ == "fit" )                                 return token::fit;
+                    else if ( idstr_ == "top" )                                 return token::top;
+                    else if ( idstr_ == "bottom" )                              return token::bottom;
+                    else if ( idstr_ == "left" )                                return token::left;
+                    else if ( idstr_ == "right" )                               return token::right;
+                    else if ( idstr_ == "repeated" )                            return token::repeated;
+                    else if ( idstr_ == "switchable" )                          return token::switchable;
+                    else if ( idstr_ == "undisplayed" )                         return token::undisplayed;
+                    //else if ( idstr_ == "dock" )                                return token::dock;
+
                     else if ( idstr_ == "vertical" || idstr_  == "vert" )       return token::vertical;
                     else if ( idstr_ == "horizontal" )                          return token::horizontal;
                     else if ( idstr_ == "variable" )                            return token::variable;
                     else if ( idstr_ == "repeated" )                            return token::repeated;
                     else if ( idstr_ == "gap"    ){ _m_attr_reparray ();        return token::gap;    }
-                    else if ( idstr_ == "arrange"){ _m_attr_reparray ();        return token::arrange;} 
+                    else if ( idstr_ == "arrange"){ _m_attr_reparray ();        return token::arrange;}
+                    else if ( idstr_ == "hfit"   ){ _m_attr_reparray ();        return token::hfit;   }
+                    else if ( idstr_ == "vfit"   ){ _m_attr_reparray ();        return token::vfit;   }
+
                     else if ( idstr_ == "grid" )
                             {      if ( token::equal != read () )
-                                      _m_throw_error ( "an equal sign is required after \'" + idstr_ + "\'" );
-                                                                            return token::grid;        } 
+                                    throw error("an equal sign is required after '" + idstr_ + "'", *this);
+                                                                                return token::grid;    }
                     else if ( idstr_ == "margin" )
                             {      if ( token::equal != read () )
-                                     _m_throw_error ( "an equal sign is required after \'" + idstr_ + "\'" );
-                                                                            return token::margin;       } 
+                                    throw error("an equal sign is required after '" + idstr_ + "'", *this);
+                                                                                return token::margin;  }
                     else if ( idstr_ =="collapse" )
                             {     if ( token::parameters != read () )
-                                    _m_throw_error ( "a parameter list is required after 'collapse'" );
-                                                                            return token::collapse;    }
+                                    throw error("a parameter list is required after 'collapse'", *this);
+                                                                               return token::collapse; }
+
+
+
                     return token::identifier;
                 }
-                _m_throw_error ( std::string ( "an invalid character '" ) + *sp_ + "'" );
+                throw error("invalid character '" + std::string(1, *sp_) + "'", *this);
                 return token::error;	//Useless, just for syntax correction.
             }
         private:
@@ -465,7 +414,6 @@ namespace nana{
             }
         private:
         };	//end class tokenizer
-
 
         typedef vplace::minmax  minmax;//     minmax(unsigned Min=MIN, unsigned Max=MAX);
         struct adj { unsigned weight, min, count_adj; adj () :weight ( 0 ), min ( 0 ), count_adj ( 0 ) {} };
@@ -1640,22 +1588,66 @@ namespace nana{
     vplace::vplace ( window wd ) : impl_ ( new implement ) { bind ( wd ); }
     vplace::vplace () : impl_ ( new implement ) {}
     vplace::~vplace () { delete impl_; }
-    void        vplace::div ( const std::string& s ) { impl_->div ( s.c_str () ); }
+
+    void vplace::div(std::string div_text)
+    {
+        try
+        {
+            place_parts::tokenizer tknizer(div_text.c_str());
+            impl_->disconnect();
+            auto div = impl_->scan_div(tknizer, true);
+            impl_->connect(div.get());		//throws if there is a redefined name of field.
+            impl_->root_division.reset();	//clear attachments div-fields
+            impl_->root_division.swap(div);
+            impl_->div_text.swap(div_text);
+        }
+        catch (place::error & ) { throw; }
+        catch (place::implement::error & e)
+        {
+            throw error("failed to set div('" + div_text + "'): " + e.what(), *this, e.field, e.pos);
+        }
+        catch (place_parts::tokenizer::error & e)
+        {
+            throw error("failed to set div('" + div_text + "'): " + e.what(), *this, "", e.pos);
+        }
+        catch (std::invalid_argument & e)
+        {
+            throw error("failed to set div('" + div_text + "'): " + e.what(), *this);
+        }
+        catch (std::exception & e)
+        {
+            throw error("failed to set div('"+div_text+"'): unexpected error: " +e.what(), *this );
+        }
+        catch (...)
+        {
+            throw error("failed to set div('" + div_text + "'): unknonw error", *this);
+        }
+    }
+
+    const std::string& vplace::div() const noexcept
+    {
+        return impl_->div_text;
+    }
+
     void        vplace::collocate () { impl_->collocate (); }
 
     adjustable&         vplace::fixed ( window wd, unsigned size )
     {
         return *new vplace_impl::Field<vplace_impl::fixed, vplace_impl::Widget> ( wd, size );//fixed_widget
     }
+
     adjustable&         vplace::percent ( window wd, double per, minmax w )
     {
         return *new vplace_impl::Field<vplace_impl::percent, vplace_impl::Widget> ( wd, per, w );//percent_widget
     }
+
     adjustable&         vplace::room ( window wd, nana::size sz)
     {
         return *new vplace_impl::Field<vplace_impl::adjustable, vplace_impl::Room > ( wd, sz );//adj_room
     }
+
     vplace::minmax::minmax ( unsigned Min, unsigned Max ) : min ( Min ), max ( Max ) {}
+
     void vplace::set_target_field (std::string name)
     {
         impl_->curr_field = name;
@@ -1772,5 +1764,151 @@ namespace nana{
 		return impl_->parent_window_handle;
 	}
 
+    vplace::error::error(const std::string& what,
+                        const vplace& plc,
+                        std::string field,
+                        std::string::size_type pos)
+
+            : std::invalid_argument(  "from widget '"
+                                      + api::window_caption(plc.window_handle()).substr(0,80)
+                                      + "'; nana::place error "
+                                      + what
+                                      + "' in field '" + field
+                                      + (pos == std::string::npos ? "' " : "' at position " + std::to_string(pos))
+                                      + " in div_text:\n" + plc.div() ),
+              base_what( what ),
+              owner_caption( api::window_caption(plc.window_handle()).substr(0,80) ),
+              div_text( plc.div() ),
+              field( field ),
+              pos( pos )
+    {}
+    //end class vplace
 
 }//end namespace nana
+
+
+/*
+class splitter_interface
+{ public:	virtual ~splitter_interface () {} };
+
+class splitter_dtrigger : public drawer_trigger
+{};
+
+template<bool IsLite>
+class splitter
+        : public widget_object <typename std::conditional<IsLite, category::lite_widget_tag, category::widget_tag>::type, splitter_dtrigger>,
+          public splitter_interface
+{};
+
+
+
+        class number_t
+        {	//number_t is used to store a number type variable
+            //such as integer, real and percent. Essentially, percent is a typo of real.
+        public:
+            enum class kind {
+                             //empty,
+                             none, integer, real, percent };
+
+number_t () : kind_ ( kind::integer ) { value_.integer = 0; }
+
+void reset () { kind_ = kind::none;		value_.integer = 0; }
+bool is_negative () const
+{
+    switch ( kind_ )
+    {
+        case kind::integer:
+            return (value_.integer < 0);
+        case kind::real:
+        case kind::percent:
+            return (value_.real < 0);
+        default:
+            break;
+    }
+    return false;
+}
+bool is_none () const
+{
+    return (kind::none == kind_);
+}
+bool is_not_none () const { return (kind::none != kind_); }
+kind kind_of () const { return kind_; }
+double get_value ( int ref_percent ) const
+{
+    switch ( kind_ )
+    {
+        case kind::integer:
+            return value_.integer;
+        case kind::real:
+            return value_.real;
+        case kind::percent:
+            return value_.real * ref_percent;
+        default:
+            break;
+    }
+    return 0;
+}
+int integer () const
+{
+    //        if( kind::empty  == kind_ )				//return 0;
+    if ( kind::integer == kind_ )				return value_.integer;
+    return static_cast<int>(value_.real);
+}
+double real () const
+{
+    //        if( kind::empty  == kind_ )				//return 0;
+    if ( kind::integer == kind_ )				return value_.integer;
+    return value_.real;
+}
+void assign ( int i ) { kind_ = kind::integer;  value_.integer = i; }
+void assign ( double d ) { kind_ = kind::real; 	value_.real = d; }
+void assign_percent ( double d ) { kind_ = kind::percent; value_.real = d / 100; }
+void clear () { *this = number_t (); }
+private:
+kind kind_;
+union valueset { int integer; double real; }value_;
+};//end class number_t
+class repeated_array
+{
+    bool                  repeated_ {false};
+    std::vector<number_t> values_;
+public:
+    //repeated_array () {}
+    //repeated_array ( repeated_array&& rhs )
+    //    : repeated_ ( rhs.repeated_ ), values_ ( std::move ( rhs.values_ ) ) {}
+    //repeated_array& operator=(const repeated_array& rhs)
+    //{
+    //    if ( this != &rhs )
+    //    {
+    //        repeated_ = rhs.repeated_;
+    //        values_ = rhs.values_;
+    //    }
+    //    return *this;
+    //}
+    void        assign ( std::vector<number_t>&& c ) { values_ = std::move ( c ); }
+    bool        empty  () const { return values_.empty (); }
+    std::size_t size   () const { return size (); }
+    void        reset  ()  { repeated_ = false;   values_.clear ();           }
+    void        repeated() { repeated_ = true; }
+    void        push   ( const number_t& n ) { values_.emplace_back ( n ); }
+    number_t    at     ( std::size_t pos ) const
+    {
+        if ( values_.empty () )
+            return{};
+
+        if ( repeated_ )
+            pos %= values_.size ();
+        else if ( pos >= values_.size () )
+            return{};
+
+        return values_[pos];
+    }
+    bool        pass_end( std::size_t pos ) const
+    {
+        return !repeated_ && pos>=values_.size () ;///// ???????? &&
+    }
+};
+
+
+
+*/

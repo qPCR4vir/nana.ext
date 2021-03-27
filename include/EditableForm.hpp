@@ -206,7 +206,6 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         SelectClickableWidget(wdg, _menuProgram);
     }
 
-
     void ResetDefLayout()
     {
         _myLayout=_DefLayout;
