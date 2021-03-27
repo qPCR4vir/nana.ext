@@ -241,20 +241,20 @@ void EditLayout_Form::on_edited()
 }
 void EditLayout_Form::SetDefLayout   ()
 {
-    _DefLayout=
-        "vertical   gap=2                                    \n\t"
-                            "<weight=25>                             \n\t"
-                            "<weight=25  OpenSave>                   \n\t"
-                            "<textBox>                               \n\t"
-                            "<weight=25 <weight=15>                  \n\t" 
-                            "           <re weight=50 gap=2>         \n\t"
-                            "           <panic weight=50>            \n\t"
-                            "           < >                          \n\t"
-                            "           <def  gap=2 weight=120>      \n\t"
-                            "           < >                          \n\t"
-                            "           <hide weight=50>             \n\t"
-                            "           <weight=15> >                \n\t" 
-                            "<weight=5>                              \n\t";
+    _DefLayout= R"(
+    vertical   gap=2                                    
+	 <height=25  menubar>                             
+	 <height=25  OpenSave>                   
+	 <textBox>                               
+	 <height=25 <width=15>                  
+	            <width=50  gap=2    re     >         
+	            <width=50           panic  >            
+	            < >                          
+	            <width=120 gap=2   def     >      
+	            < >                          
+	            <width=50          hide    >             
+	            <width=15> >                
+	 <height=5>     )"      ;
 }
 void EditLayout_Form::AsignWidgetToFields() 
 {
