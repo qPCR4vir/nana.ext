@@ -17,7 +17,8 @@ target_sources            (nana_ext PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/src/CompoWidget.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/EditableForm.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/number.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/src/vplace.cpp)
+        # ${CMAKE_CURRENT_LIST_DIR}/src/vplace.cpp
+		)
 
 
 

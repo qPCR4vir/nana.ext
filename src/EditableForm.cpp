@@ -131,14 +131,13 @@ EditableForm::EditableForm ( nana::window EdWd_owner,   ///< The owner of the fo
 
 void EditableWidget::EditMyLayout(/*nana::widget & EdWd_own, nana::widget &EdLyF_own*/)
 		{
-			if (!_myEdLayForm) 
-				_myEdLayForm = new EditLayout_Form ( *this,0 ) ;
-                //_myEdLayForm = nana::detail::bedrock::instance().rt_manager.create_form<EditLayout_Form, EditableWidget, int>(*this, 0);
-                //_myEdLayForm = std::addressof(nana::form_loader<EditLayout_Form, true>() (*this, int{}));
-				//_myEdLayForm.reset (new EditLayout_Form (  wd ));
+           if (BlockInteratctiveEdition()) return;
+
+			if (!_myEdLayForm) _myEdLayForm = new EditLayout_Form ( *this,0 ) ;
+        
 			_myEdLayForm->show ();
 		}
- 	//void         EditMyLayout   (nana::widget & EdWd_own, nana::widget &EdLyF_own);
+
 
 EditableWidget::~EditableWidget()
         {
@@ -334,7 +333,9 @@ void EditLayout_Form::ForceSave(const std::string   &file)
     }   
 const char* EditableWidget::readLayout(const std::string& FileName, std::string& Layout)
     {
-		std::ifstream loy(FileName);
+		if (globalBlockConfig()) return Layout.c_str();
+
+        std::ifstream loy(FileName);
 		std::string temp;
 		while (std::getline(loy,temp)) Layout+=temp + "\n";
 		//assert((     std::cout<<std::endl<< Layout   , true  ));;

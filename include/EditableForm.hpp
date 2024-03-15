@@ -64,30 +64,16 @@ class EnablingEditing
     static bool _globalBlockInteratctiveEdition, _globalBlockConfig ;
            bool       _BlockInteratctiveEdition,       _BlockConfig ;
  public:
-    static bool  globalBlockInteratctiveEdition(bool block=_globalBlockInteratctiveEdition)
-    {
-        return _globalBlockInteratctiveEdition=block;
-    }
-    static bool  globalBlockConfig(bool block=_globalBlockConfig)
-    {
-        return _globalBlockConfig=block;
-    }
-    bool  BlockInteratctiveEdition() const
-    {
-        return _BlockInteratctiveEdition;
-    }
-    bool  BlockConfig() const 
-    {
-        return _BlockConfig;
-    }
-    bool  BlockInteratctiveEdition(bool block)
-    {
-        return _BlockInteratctiveEdition=block;
-    }
-    bool  BlockConfig(bool block)
-    {
-        return _BlockConfig=block;
-    }
+
+    static bool  globalBlockConfig(bool block)     { return _globalBlockConfig=block;  }
+    static bool  globalBlockConfig()               { return _globalBlockConfig; }
+    static bool  globalBlockInteratctiveEdition(bool block) { return _globalBlockInteratctiveEdition=block; }
+    static bool  globalBlockInteratctiveEdition()           { return _globalBlockInteratctiveEdition;       }
+
+    bool  BlockConfig(bool block)              { return _BlockConfig=block;  }
+    bool  BlockConfig() const                  { return _BlockConfig || globalBlockConfig();   }
+    bool  BlockInteratctiveEdition(bool block) { return _BlockInteratctiveEdition=block; }
+    bool  BlockInteratctiveEdition() const     { return _BlockInteratctiveEdition || globalBlockInteratctiveEdition(); }
 };
 
 class EditLayout_Form;
@@ -176,7 +162,7 @@ virtual    void add_validated(const std::function<bool(void)>& v)
         SetDefLayout   ();
         _myLayout= _DefLayout;
         std::string lay_from_file;
-        readLayout( _DefLayoutFileName, lay_from_file);
+        if (!BlockConfig()) readLayout( _DefLayoutFileName, lay_from_file);
         if (lay_from_file.empty() )
             lay_from_file=_DefLayout;
 
@@ -190,6 +176,8 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 
     void InitMenu   (nana::menu& menuProgram)
     {
+       if (BlockInteratctiveEdition()) return;
+
        menuProgram.append("&Edit this windows Layout",[&](nana::menu::item_proxy& ip)
 	                                                            {EditMyLayout(); }                  );
        menuProgram.append("&Reset this windows default Layout",[&](nana::menu::item_proxy& ip)
@@ -198,7 +186,9 @@ virtual    void add_validated(const std::function<bool(void)>& v)
 
     void SelectClickableWidget(nana::widget& wdg, nana::menu& menuProgram)
     {
-        wdg.events().mouse_down (nana::menu_popuper(menuProgram) );   
+        if (BlockInteratctiveEdition()) return;
+
+        wdg.events().mouse_down (nana::menu_popuper(menuProgram) );
     }
 
     void SelectClickableWidget(nana::widget& wdg)
